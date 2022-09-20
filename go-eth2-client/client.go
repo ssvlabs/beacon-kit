@@ -3,6 +3,7 @@ package eth2client
 import (
 	"context"
 	"errors"
+	"strings"
 	"time"
 
 	eth2client "github.com/attestantio/go-eth2-client"
@@ -11,6 +12,7 @@ import (
 	"github.com/attestantio/go-eth2-client/spec"
 	"github.com/attestantio/go-eth2-client/spec/altair"
 	"github.com/attestantio/go-eth2-client/spec/phase0"
+	"github.com/bloxapp/beacon-kit"
 )
 
 // ErrCallNotSupported is returned when the implementation does not support the requested call.
@@ -64,7 +66,29 @@ func (c *Client) SignedBeaconBlock(ctx context.Context, blockID string) (*spec.V
 	if !ok {
 		return nil, ErrCallNotSupported
 	}
-	return provider.SignedBeaconBlock(ctx, blockID)
+	block, err := provider.SignedBeaconBlock(ctx, blockID)
+	if err != nil {
+		// Hack to gracefully handle missing blocks from Prysm.
+		notFound := false
+		errString := err.Error()
+		for _, s := range []string{
+			"Could not get block from block ID: rpc error: code = NotFound",
+			"rpc error: code = NotFound desc = Could not find requested block: signed beacon block can't be nil", // v2.1.0
+		} {
+			if strings.Contains(errString, s) {
+				notFound = true
+				break
+			}
+		}
+		if !notFound {
+			return nil, err
+		}
+		block = nil
+	}
+	if block == nil {
+		return nil, beacon.ErrBlockNotFound
+	}
+	return block, nil
 }
 
 func (c *Client) BeaconBlockHeader(ctx context.Context, blockID string) (*apiv1.BeaconBlockHeader, error) {

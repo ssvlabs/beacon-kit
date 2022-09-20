@@ -3,6 +3,11 @@ import (
 	apiv1 "github.com/attestantio/go-eth2-client/api/v1"
 )
 
+type Methods struct {
+    defaultClient func() beacon.Client
+    callFunc func(ctx context.Context, callFunc func(context.Context, beacon.Client) error) error
+}
+
 type methodCtxKey struct{}
 
 func methodFromContext(ctx context.Context) string {
@@ -10,15 +15,15 @@ func methodFromContext(ctx context.Context) string {
 }
 
 {{range $method := .Interface.Methods}}
-    func (c *Client) {{$method.Declaration}} {
+    func (m *Methods) {{$method.Declaration}} {
     {{- if or (not $method.HasResults) (not $method.AcceptsContext)}}
-        {{$method.Pass "c.clients[0]."}}
+        {{$method.Pass "m.defaultClient()."}}
     {{else}}
         ctx = context.WithValue(ctx, methodCtxKey{}, "{{$method.Name}}")
         type _resultStruct {{$method.ResultsStruct}}
         var _result, _unchecked _resultStruct
         var _mutex sync.Mutex
-        _result.err =  c.Call(ctx, func(ctx context.Context, client beacon.Client) error {
+        _result.err =  m.callFunc(ctx, func(ctx context.Context, client beacon.Client) error {
             {{$method.ResultsNames}} := client.{{$method.Call}}
             _mutex.Lock()
             defer _mutex.Unlock()

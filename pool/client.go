@@ -32,6 +32,7 @@ type state struct {
 type Client struct {
 	*state
 	scope Scope
+	*methods
 }
 
 // New creates a new Client with the given clients and options.
@@ -39,7 +40,7 @@ func New(clients []beacon.Client, options ...interface{}) *Client {
 	scope := DefaultScope()
 	scope.apply(options...)
 
-	return &Client{
+	client := &Client{
 		state: &state{
 			clients:              clients,
 			desiredSubscriptions: map[uuid.UUID]subscription{},
@@ -47,6 +48,18 @@ func New(clients []beacon.Client, options ...interface{}) *Client {
 		},
 		scope: *scope,
 	}
+	client.methods = &methods{
+		defaultClient: client.defaultClient,
+		callFunc:      client.Call,
+	}
+	return client
+}
+
+func (c *Client) defaultClient() beacon.Client {
+	c.clientsMu.RLock()
+	defer c.clientsMu.RUnlock()
+
+	return c.clients[0]
 }
 
 // Size returns the number of clients in the pool.
