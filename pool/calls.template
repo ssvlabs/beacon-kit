@@ -1,0 +1,39 @@
+import (
+    "context"
+	apiv1 "github.com/attestantio/go-eth2-client/api/v1"
+)
+
+type methodCtxKey struct{}
+
+func methodFromContext(ctx context.Context) string {
+    return ctx.Value(methodCtxKey{}).(string)
+}
+
+{{range $method := .Interface.Methods}}
+    func (c *Client) {{$method.Declaration}} {
+    {{- if or (not $method.HasResults) (not $method.AcceptsContext)}}
+        {{$method.Pass "c.clients[0]."}}
+    {{else}}
+        ctx = context.WithValue(ctx, methodCtxKey{}, "{{$method.Name}}")
+        type _resultStruct {{$method.ResultsStruct}}
+        var _result, _unchecked _resultStruct
+        var _mutex sync.Mutex
+        _result.err =  c.Call(ctx, func(ctx context.Context, client beacon.Client) error {
+            {{$method.ResultsNames}} := client.{{$method.Call}}
+            _mutex.Lock()
+            defer _mutex.Unlock()
+            _unchecked = _resultStruct{ {{$method.ResultsNames}} }
+        {{- if $method.ReturnsError}}
+            if err != nil {
+                return err
+            }
+            _result = _unchecked
+            return nil
+        {{else}}
+            return nil
+        {{end -}}
+        })
+        {{$method.ReturnStruct "_result"}}
+    {{end -}}
+    }
+{{end}}
