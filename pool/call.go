@@ -3,6 +3,7 @@ package pool
 import (
 	"context"
 	"fmt"
+	"log"
 	"strings"
 	"sync"
 	"time"
@@ -175,12 +176,14 @@ func (c *call) receiveCalls(ctx context.Context, jobs chan<- int, logs <-chan *C
 		// )
 
 		if log.Err != nil {
-			delay, retry := c.scope.Retry(clientTries[log.ClientIndex], log.Err)
-			if retry {
-				clientTries[log.ClientIndex]++
-				time.Sleep(delay)
-				jobs <- log.ClientIndex
-				continue
+			if c.shouldRetryError(log.Err) {
+				delay, retry := c.scope.Retry(clientTries[log.ClientIndex], log.Err)
+				if retry {
+					clientTries[log.ClientIndex]++
+					time.Sleep(delay)
+					jobs <- log.ClientIndex
+					continue
+				}
 			}
 		} else if c.scope.FirstSuccess {
 			// Quit on first success.
@@ -200,4 +203,8 @@ func (c *call) receiveCalls(ctx context.Context, jobs chan<- int, logs <-chan *C
 		}
 	}
 	return nil
+}
+
+func (c *call) shouldRetryError(err error) bool {
+	return err != beacon.ErrBlockNotFound
 }
