@@ -44,7 +44,7 @@ func New(spec *beacon.Spec, poolClient *pool.Client, options Options) *Client {
 // BestAttestationDataSelection subscribes to block events to select
 // the best (rather than the first) AttestationData.
 func (c *Client) BestAttestationDataSelection(ctx context.Context) error {
-	err := c.EventsWithClient(ctx, []string{"block"}, func(_ beacon.Client, e *api.Event) {
+	err := c.EventsWithClient(ctx, []string{"block"}, func(client beacon.Client, e *api.Event) {
 		log.Printf("GotBlockEventData: %#v", e.Data)
 		if e.Data == nil {
 			return
@@ -53,7 +53,7 @@ func (c *Client) BestAttestationDataSelection(ctx context.Context) error {
 
 		c.blockRootSlotsMu.Lock()
 		defer c.blockRootSlotsMu.Unlock()
-		log.Printf("GotBlockEvent root %#x for slot %d", data.Block, data.Slot)
+		log.Printf("GotBlockEvent root %#x for slot %d from %s", data.Block, data.Slot, client.Address())
 		c.blockRootSlots[data.Block] = data.Slot
 	})
 	if err != nil {
