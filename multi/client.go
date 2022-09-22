@@ -2,7 +2,6 @@ package multi
 
 import (
 	"context"
-	"encoding/json"
 	"log"
 	"sync"
 	"time"
@@ -27,17 +26,15 @@ type Client struct {
 	spec    *beacon.Spec
 	options Options
 
-	blockRootSlots   map[phase0.Root]phase0.Slot
-	blockRootSlotsMu *sync.Mutex
+	blockRootSlots *blockRootSlots
 }
 
 func New(spec *beacon.Spec, poolClient *pool.Client, options Options) *Client {
 	return &Client{
-		spec:             spec,
-		Client:           poolClient,
-		options:          options,
-		blockRootSlots:   map[phase0.Root]phase0.Slot{},
-		blockRootSlotsMu: &sync.Mutex{},
+		spec:           spec,
+		Client:         poolClient,
+		options:        options,
+		blockRootSlots: newBlockRootSlots(),
 	}
 }
 
@@ -51,10 +48,8 @@ func (c *Client) BestAttestationDataSelection(ctx context.Context) error {
 		}
 		data := e.Data.(*api.BlockEvent)
 
-		c.blockRootSlotsMu.Lock()
-		defer c.blockRootSlotsMu.Unlock()
 		log.Printf("GotBlockEvent root %#x for slot %d from %s", data.Block, data.Slot, client.Address())
-		c.blockRootSlots[data.Block] = data.Slot
+		c.blockRootSlots.Set(data.Block, data.Slot)
 	})
 	if err != nil {
 		return err
@@ -72,17 +67,7 @@ func (c *Client) BestAttestationDataSelection(ctx context.Context) error {
 				return
 			case <-time.After(30 * time.Second):
 				minSlot := c.spec.Clock().Now().Slot() - maxSlotAge
-				deleted := 0
-				func() {
-					c.blockRootSlotsMu.Lock()
-					defer c.blockRootSlotsMu.Unlock()
-					for root, slot := range c.blockRootSlots {
-						if slot < minSlot {
-							delete(c.blockRootSlots, root)
-							deleted++
-						}
-					}
-				}()
+				deleted := c.blockRootSlots.Purge(minSlot)
 				log.Printf("DeletedBlockRootSlots: %d", deleted)
 			}
 		}
@@ -99,9 +84,9 @@ func (c *Client) With(options ...interface{}) *Client {
 
 func (c *Client) AttestationData(ctx context.Context, slot phase0.Slot, committeeIndex phase0.CommitteeIndex) (*phase0.AttestationData, error) {
 	var (
-		best        *phase0.AttestationData
-		highestSlot phase0.Slot
-		mu          sync.Mutex
+		bestData     *phase0.AttestationData
+		bestDataSlot phase0.Slot
+		mu           sync.Mutex
 	)
 	err := c.With(pool.FirstSuccess(false)).
 		Call(ctx, func(ctx context.Context, client beacon.Client) error {
@@ -113,33 +98,26 @@ func (c *Client) AttestationData(ctx context.Context, slot phase0.Slot, committe
 				return nil
 			}
 
-			c.blockRootSlotsMu.Lock()
-			dataSlot := c.blockRootSlots[data.BeaconBlockRoot]
-			c.blockRootSlotsMu.Unlock()
+			dataSlot, _ := c.blockRootSlots.Get(data.BeaconBlockRoot)
 			log.Printf("FoundSlotForAttestation: %#x -> %d", data.BeaconBlockRoot, dataSlot)
 
-			if best == nil || dataSlot > highestSlot {
+			func() {
 				mu.Lock()
+				defer mu.Unlock()
+				if bestData == nil || dataSlot > bestDataSlot {
 
-				if best != nil && dataSlot > highestSlot {
-					b1, err := json.Marshal(data)
-					if err != nil {
-						return err
+					// LOG:
+					if bestData != nil && dataSlot > bestDataSlot {
+						log.Printf("SelectedBetterAttestation: %d>%d — %#x (((VERSUS))) %#x", dataSlot, bestDataSlot, data.BeaconBlockRoot, bestData.BeaconBlockRoot)
 					}
-					b2, err := json.Marshal(best)
-					if err != nil {
-						return err
-					}
-					log.Printf("SelectedBetterAttestation: %d>%d — %s (((VERSUS))) %s", highestSlot, dataSlot, string(b1), string(b2))
+
+					bestData = data
+					bestDataSlot = dataSlot
 				}
-
-				best = data
-				highestSlot = dataSlot
-				mu.Unlock()
-			}
+			}()
 			return nil
 		})
-	return best, err
+	return bestData, err
 }
 
 func (c *Client) SubmitBeaconCommitteeSubscriptions(ctx context.Context, subscriptions []*api.BeaconCommitteeSubscription) error {
