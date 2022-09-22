@@ -3,7 +3,6 @@ package pool
 import (
 	"context"
 	"fmt"
-	"log"
 	"strings"
 	"sync"
 	"time"
