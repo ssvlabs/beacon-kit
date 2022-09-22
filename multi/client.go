@@ -120,7 +120,7 @@ func (c *Client) AttestationData(ctx context.Context, slot phase0.Slot, committe
 					if err != nil {
 						return err
 					}
-					log.Printf("SelectedBetterAttestation: %s (((VERSUS))) %s", string(b1), string(b2))
+					log.Printf("SelectedBetterAttestation: %d>%d — %s (((VERSUS))) %s", highestSlot, dataSlot, string(b1), string(b2))
 				}
 
 				best = data
