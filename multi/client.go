@@ -52,6 +52,7 @@ func (c *Client) BestAttestationDataSelection(ctx context.Context) error {
 
 		c.blockRootSlotsMu.Lock()
 		defer c.blockRootSlotsMu.Unlock()
+		log.Printf("GotBlockEvent root %#x for slot %d", data.Block, data.Slot)
 		c.blockRootSlots[data.Block] = data.Slot
 	})
 	if err != nil {
