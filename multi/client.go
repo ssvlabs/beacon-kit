@@ -68,16 +68,18 @@ func (c *Client) BestAttestationDataSelection(ctx context.Context) error {
 		for {
 			time.Sleep(time.Second * 30)
 			func() {
-				c.blockRootSlotsMu.Lock()
-				defer c.blockRootSlotsMu.Lock()
 				minSlot := c.spec.Clock().Now().Slot() - maxSlotAge
 				deleted := 0
+
+				c.blockRootSlotsMu.Lock()
+				defer c.blockRootSlotsMu.Lock()
 				for root, slot := range c.blockRootSlots {
 					if slot < minSlot {
 						delete(c.blockRootSlots, root)
 						deleted++
 					}
 				}
+
 				log.Printf("DeletedBlockRootSlots: %d", deleted)
 			}()
 		}
@@ -107,8 +109,12 @@ func (c *Client) AttestationData(ctx context.Context, slot phase0.Slot, committe
 			if data == nil {
 				return nil
 			}
+
+			c.blockRootSlotsMu.Lock()
 			dataSlot := c.blockRootSlots[data.BeaconBlockRoot]
+			c.blockRootSlotsMu.Unlock()
 			log.Printf("FoundSlotForAttestation: %#x -> %d", data.BeaconBlockRoot, dataSlot)
+
 			if best == nil || dataSlot > highestSlot {
 				mu.Lock()
 
