@@ -45,6 +45,7 @@ func New(spec *beacon.Spec, poolClient *pool.Client, options Options) *Client {
 // the best (rather than the first) AttestationData.
 func (c *Client) BestAttestationDataSelection(ctx context.Context) error {
 	err := c.EventsWithClient(ctx, []string{"block"}, func(_ beacon.Client, e *api.Event) {
+		log.Printf("GotBlockEventData: %#v", e.Data)
 		if e.Data == nil {
 			return
 		}
@@ -66,22 +67,26 @@ func (c *Client) BestAttestationDataSelection(ctx context.Context) error {
 
 		// Every 30 seconds.
 		for {
-			time.Sleep(time.Second * 30)
-			func() {
-				minSlot := c.spec.Clock().Now().Slot() - maxSlotAge
-				deleted := 0
+			select {
+			case <-ctx.Done():
+				return
+			case <-time.After(30 * time.Second):
+				func() {
+					minSlot := c.spec.Clock().Now().Slot() - maxSlotAge
+					deleted := 0
 
-				c.blockRootSlotsMu.Lock()
-				defer c.blockRootSlotsMu.Lock()
-				for root, slot := range c.blockRootSlots {
-					if slot < minSlot {
-						delete(c.blockRootSlots, root)
-						deleted++
+					c.blockRootSlotsMu.Lock()
+					defer c.blockRootSlotsMu.Lock()
+					for root, slot := range c.blockRootSlots {
+						if slot < minSlot {
+							delete(c.blockRootSlots, root)
+							deleted++
+						}
 					}
-				}
 
-				log.Printf("DeletedBlockRootSlots: %d", deleted)
-			}()
+					log.Printf("DeletedBlockRootSlots: %d", deleted)
+				}()
+			}
 		}
 	}()
 
