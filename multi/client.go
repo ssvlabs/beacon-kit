@@ -71,21 +71,19 @@ func (c *Client) BestAttestationDataSelection(ctx context.Context) error {
 			case <-ctx.Done():
 				return
 			case <-time.After(30 * time.Second):
+				minSlot := c.spec.Clock().Now().Slot() - maxSlotAge
+				deleted := 0
 				func() {
-					minSlot := c.spec.Clock().Now().Slot() - maxSlotAge
-					deleted := 0
-
 					c.blockRootSlotsMu.Lock()
-					defer c.blockRootSlotsMu.Lock()
+					defer c.blockRootSlotsMu.Unlock()
 					for root, slot := range c.blockRootSlots {
 						if slot < minSlot {
 							delete(c.blockRootSlots, root)
 							deleted++
 						}
 					}
-
-					log.Printf("DeletedBlockRootSlots: %d", deleted)
 				}()
+				log.Printf("DeletedBlockRootSlots: %d", deleted)
 			}
 		}
 	}()
