@@ -70,11 +70,14 @@ func (c *Client) BestAttestationDataSelection(ctx context.Context) error {
 				c.blockRootSlotsMu.Lock()
 				defer c.blockRootSlotsMu.Lock()
 				minSlot := c.spec.Clock().Now().Slot() - maxSlotAge
+				deleted := 0
 				for root, slot := range c.blockRootSlots {
 					if slot < minSlot {
 						delete(c.blockRootSlots, root)
+						deleted++
 					}
 				}
+				log.Printf("DeletedBlockRootSlots: %d", deleted)
 			}()
 		}
 	}()
@@ -94,37 +97,38 @@ func (c *Client) AttestationData(ctx context.Context, slot phase0.Slot, committe
 		highestSlot phase0.Slot
 		mu          sync.Mutex
 	)
-	err := c.Call(ctx, func(ctx context.Context, client beacon.Client) error {
-		data, err := client.AttestationData(ctx, slot, committeeIndex)
-		if err != nil {
-			return err
-		}
-		if data == nil {
-			return nil
-		}
-		dataSlot := c.blockRootSlots[data.BeaconBlockRoot]
-		log.Printf("FoundSlotForAttestation: %#x -> %d", data.BeaconBlockRoot, dataSlot)
-		if best == nil || dataSlot > highestSlot {
-			mu.Lock()
-
-			if best != nil && dataSlot > highestSlot {
-				b1, err := json.Marshal(data)
-				if err != nil {
-					return err
-				}
-				b2, err := json.Marshal(best)
-				if err != nil {
-					return err
-				}
-				log.Printf("SelectedBetterAttestation: %s (((VERSUS))) %s", string(b1), string(b2))
+	err := c.With(pool.FirstSuccess(false)).
+		Call(ctx, func(ctx context.Context, client beacon.Client) error {
+			data, err := client.AttestationData(ctx, slot, committeeIndex)
+			if err != nil {
+				return err
 			}
+			if data == nil {
+				return nil
+			}
+			dataSlot := c.blockRootSlots[data.BeaconBlockRoot]
+			log.Printf("FoundSlotForAttestation: %#x -> %d", data.BeaconBlockRoot, dataSlot)
+			if best == nil || dataSlot > highestSlot {
+				mu.Lock()
 
-			best = data
-			highestSlot = dataSlot
-			mu.Unlock()
-		}
-		return nil
-	})
+				if best != nil && dataSlot > highestSlot {
+					b1, err := json.Marshal(data)
+					if err != nil {
+						return err
+					}
+					b2, err := json.Marshal(best)
+					if err != nil {
+						return err
+					}
+					log.Printf("SelectedBetterAttestation: %s (((VERSUS))) %s", string(b1), string(b2))
+				}
+
+				best = data
+				highestSlot = dataSlot
+				mu.Unlock()
+			}
+			return nil
+		})
 	return best, err
 }
 
