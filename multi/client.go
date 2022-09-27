@@ -107,7 +107,7 @@ func (c *Client) AttestationData(ctx context.Context, slot phase0.Slot, committe
 
 			logging.FromContext(ctx).Debug("Scoring AttestationData",
 				zap.String("client", client.Address()),
-				zap.String("block_root", fmt.Sprintf("%#v", data.BeaconBlockRoot)),
+				zap.String("block_root", fmt.Sprintf("%#x", data.BeaconBlockRoot)),
 				zap.Uint64("derived_slot", uint64(dataSlot)))
 
 			func() {
@@ -119,10 +119,10 @@ func (c *Client) AttestationData(ctx context.Context, slot phase0.Slot, committe
 
 						logging.FromContext(ctx).Debug("Better AttestationData detected",
 							zap.String("client", bestDataClient),
-							zap.String("block_root", fmt.Sprintf("%#v", bestData.BeaconBlockRoot)),
+							zap.String("block_root", fmt.Sprintf("%#x", bestData.BeaconBlockRoot)),
 							zap.Uint64("slot", uint64(bestDataSlot)),
 							zap.String("better_client", client.Address()),
-							zap.String("better_block_root", fmt.Sprintf("%#v", data.BeaconBlockRoot)),
+							zap.String("better_block_root", fmt.Sprintf("%#x", data.BeaconBlockRoot)),
 							zap.Uint64("better_slot", uint64(dataSlot)))
 					}
 
