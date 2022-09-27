@@ -2,6 +2,7 @@ package multi
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"sync"
 	"time"
@@ -9,7 +10,9 @@ import (
 	api "github.com/attestantio/go-eth2-client/api/v1"
 	"github.com/attestantio/go-eth2-client/spec/phase0"
 	"github.com/bloxapp/beacon-kit"
+	"github.com/bloxapp/beacon-kit/logging"
 	"github.com/bloxapp/beacon-kit/pool"
+	"go.uber.org/zap"
 )
 
 type CallTrace struct {
@@ -42,13 +45,13 @@ func New(spec *beacon.Spec, poolClient *pool.Client, options Options) *Client {
 // the best (rather than the first) AttestationData.
 func (c *Client) BestAttestationDataSelection(ctx context.Context) error {
 	err := c.EventsWithClient(ctx, []string{"block"}, func(client beacon.Client, e *api.Event) {
-		log.Printf("GotBlockEventData: %#v", e.Data)
+		// log.Printf("GotBlockEventData: %#v", e.Data)
 		if e.Data == nil {
 			return
 		}
 		data := e.Data.(*api.BlockEvent)
 
-		log.Printf("GotBlockEvent root %#x for slot %d from %s", data.Block, data.Slot, client.Address())
+		// log.Printf("GotBlockEvent root %#x for slot %d from %s", data.Block, data.Slot, client.Address())
 		c.blockRootSlots.Set(data.Block, data.Slot)
 	})
 	if err != nil {
@@ -68,7 +71,7 @@ func (c *Client) BestAttestationDataSelection(ctx context.Context) error {
 			case <-time.After(30 * time.Second):
 				minSlot := c.spec.Clock().Now().Slot() - maxSlotAge
 				deleted := c.blockRootSlots.Purge(minSlot)
-				log.Printf("DeletedBlockRootSlots: %d", deleted)
+				log.Printf("Purging blockRootSlots: %d slots deleted", deleted)
 			}
 		}
 	}()
@@ -84,9 +87,10 @@ func (c *Client) With(options ...interface{}) *Client {
 
 func (c *Client) AttestationData(ctx context.Context, slot phase0.Slot, committeeIndex phase0.CommitteeIndex) (*phase0.AttestationData, error) {
 	var (
-		bestData     *phase0.AttestationData
-		bestDataSlot phase0.Slot
-		mu           sync.Mutex
+		bestData       *phase0.AttestationData
+		bestDataSlot   phase0.Slot
+		bestDataClient string
+		mu             sync.Mutex
 	)
 	err := c.With(pool.FirstSuccess(false)).
 		Call(ctx, func(ctx context.Context, client beacon.Client) error {
@@ -99,20 +103,32 @@ func (c *Client) AttestationData(ctx context.Context, slot phase0.Slot, committe
 			}
 
 			dataSlot, _ := c.blockRootSlots.Get(data.BeaconBlockRoot)
-			log.Printf("FoundSlotForAttestation: %#x -> %d", data.BeaconBlockRoot, dataSlot)
+			// log.Printf("FoundSlotForAttestation: %#x -> %d", data.BeaconBlockRoot, dataSlot)
+
+			logging.FromContext(ctx).Debug("Scoring AttestationData",
+				zap.String("client", client.Address()),
+				zap.String("block_root", fmt.Sprintf("%#v", data.BeaconBlockRoot)),
+				zap.Uint64("derived_slot", uint64(dataSlot)))
 
 			func() {
 				mu.Lock()
 				defer mu.Unlock()
 				if bestData == nil || dataSlot > bestDataSlot {
-
-					// LOG:
 					if bestData != nil && dataSlot > bestDataSlot {
-						log.Printf("SelectedBetterAttestation: %d>%d — %#x (((VERSUS))) %#x", dataSlot, bestDataSlot, data.BeaconBlockRoot, bestData.BeaconBlockRoot)
+						// log.Printf("SelectedBetterAttestation: %d>%d — %#x (((VERSUS))) %#x", dataSlot, bestDataSlot, data.BeaconBlockRoot, bestData.BeaconBlockRoot)
+
+						logging.FromContext(ctx).Debug("Better AttestationData detected",
+							zap.String("client", bestDataClient),
+							zap.String("block_root", fmt.Sprintf("%#v", bestData.BeaconBlockRoot)),
+							zap.Uint64("slot", uint64(bestDataSlot)),
+							zap.String("better_client", client.Address()),
+							zap.String("better_block_root", fmt.Sprintf("%#v", data.BeaconBlockRoot)),
+							zap.Uint64("better_slot", uint64(dataSlot)))
 					}
 
 					bestData = data
 					bestDataSlot = dataSlot
+					bestDataClient = client.Address()
 				}
 			}()
 			return nil
