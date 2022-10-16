@@ -28,7 +28,7 @@ var (
 		Network:                              "mainnet",
 		GenesisTime:                          time.Unix(1606824023, 0),
 		GenesisSlot:                          0,
-		GenesisForkVersion:                   phase0.Version{0x90, 0x0, 0x0, 0x69},
+		GenesisForkVersion:                   phase0.Version{0x0, 0x0, 0x0, 0x0},
 		FarFutureEpoch:                       phase0.Epoch(math.MaxUint64),
 		SlotsPerEpoch:                        32,
 		SecondsPerSlot:                       12,
