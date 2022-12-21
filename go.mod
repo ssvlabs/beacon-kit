@@ -1,9 +1,9 @@
 module github.com/bloxapp/beacon-kit
 
-go 1.19
+go 1.18
 
 require (
-	github.com/attestantio/go-eth2-client v0.13.6
+	github.com/attestantio/go-eth2-client v0.14.0
 	github.com/google/uuid v1.3.0
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/stretchr/testify v1.8.0
