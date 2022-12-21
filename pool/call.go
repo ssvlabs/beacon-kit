@@ -8,6 +8,8 @@ import (
 	"time"
 
 	"github.com/bloxapp/beacon-kit"
+	"github.com/bloxapp/beacon-kit/logging"
+	"go.uber.org/zap"
 )
 
 type CallLog struct {
@@ -168,11 +170,11 @@ func (c *call) receiveCalls(ctx context.Context, jobs chan<- int, logs <-chan *C
 		trace = append(trace, *log)
 
 		// TODO: don't log like that :D
-		// logging.FromContext(ctx).Debug(
-		// 	fmt.Sprintf("ClientCall/%s", methodFromContext(ctx)),
-		// 	zap.Int("client_index", log.ClientIndex),
-		// 	zap.Any("log", log),
-		// )
+		logging.FromContext(ctx).Debug(
+			fmt.Sprintf("ClientCall/%s", methodFromContext(ctx)),
+			zap.Int("client_index", log.ClientIndex),
+			zap.Any("log", log),
+		)
 
 		if log.Err != nil {
 			if c.shouldRetryError(log.Err) {
