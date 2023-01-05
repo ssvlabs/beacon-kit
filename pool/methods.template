@@ -3,7 +3,7 @@ import (
 	apiv1 "github.com/attestantio/go-eth2-client/api/v1"
 )
 
-type Methods struct {
+type methods struct {
     defaultClient func() beacon.Client
     callFunc func(ctx context.Context, callFunc func(context.Context, beacon.Client) error) error
 }
@@ -11,11 +11,15 @@ type Methods struct {
 type methodCtxKey struct{}
 
 func methodFromContext(ctx context.Context) string {
-    return ctx.Value(methodCtxKey{}).(string)
+	method, ok := ctx.Value(methodCtxKey{}).(string)
+	if !ok {
+		return "<unknown>"
+	}
+	return method
 }
 
 {{range $method := .Interface.Methods}}
-    func (m *Methods) {{$method.Declaration}} {
+    func (m *methods) {{$method.Declaration}} {
     {{- if or (not $method.HasResults) (not $method.AcceptsContext)}}
         {{$method.Pass "m.defaultClient()."}}
     {{else}}

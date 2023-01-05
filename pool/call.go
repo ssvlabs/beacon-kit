@@ -8,6 +8,8 @@ import (
 	"time"
 
 	"github.com/bloxapp/beacon-kit"
+	"github.com/bloxapp/beacon-kit/logging"
+	"go.uber.org/zap"
 )
 
 type CallLog struct {
@@ -163,45 +165,52 @@ func (c *call) receiveCalls(ctx context.Context, jobs chan<- int, logs <-chan *C
 	// 		len(c.clients), exhaustedClients, len(trace.Errors()), clientTries)
 	// }()
 
-	for log := range logs {
-		log.Attempt = clientTries[log.ClientIndex]
-		trace = append(trace, *log)
-
-		// TODO: don't log like that :D
-		// logging.FromContext(ctx).Debug(
-		// 	fmt.Sprintf("ClientCall/%s", methodFromContext(ctx)),
-		// 	zap.Int("client_index", log.ClientIndex),
-		// 	zap.Any("log", log),
-		// )
-
-		if log.Err != nil {
-			if c.shouldRetryError(log.Err) {
-				delay, retry := c.scope.Retry(clientTries[log.ClientIndex], log.Err)
-				if retry {
-					clientTries[log.ClientIndex]++
-					time.Sleep(delay)
-					jobs <- log.ClientIndex
-					continue
-				}
-			}
-		} else if c.scope.FirstSuccess {
-			// Quit on first success.
-			// TODO: we ignore previous errors here.
+	for {
+		select {
+		case <-ctx.Done():
 			return nil
-		}
-
-		// If we got here, we either succeeded or we're not retrying.
-		exhaustedClients++
-
-		if exhaustedClients == len(c.clients) {
-			if len(trace.Errors()) < len(c.clients) {
-				// TODO: we ignore errors here.
+		case log, ok := <-logs:
+			if !ok {
 				return nil
 			}
-			return &Error{trace}
+			log.Attempt = clientTries[log.ClientIndex]
+			trace = append(trace, *log)
+
+			// TODO: don't log like that :D
+			logging.FromContext(ctx).Debug(
+				fmt.Sprintf("ClientCall/%s", methodFromContext(ctx)),
+				zap.Int("client_index", log.ClientIndex),
+				zap.Any("log", log),
+			)
+
+			if log.Err != nil {
+				if c.shouldRetryError(log.Err) {
+					delay, retry := c.scope.Retry(clientTries[log.ClientIndex], log.Err)
+					if retry {
+						clientTries[log.ClientIndex]++
+						time.Sleep(delay)
+						jobs <- log.ClientIndex
+						continue
+					}
+				}
+			} else if c.scope.FirstSuccess {
+				// Quit on first success.
+				// TODO: we ignore previous errors here.
+				return nil
+			}
+
+			// If we got here, we either succeeded or we're not retrying.
+			exhaustedClients++
+
+			if exhaustedClients == len(c.clients) {
+				if len(trace.Errors()) < len(c.clients) {
+					// TODO: we ignore errors here.
+					return nil
+				}
+				return &Error{trace}
+			}
 		}
 	}
-	return nil
 }
 
 func (c *call) shouldRetryError(err error) bool {

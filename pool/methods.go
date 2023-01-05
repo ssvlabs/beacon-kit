@@ -27,7 +27,11 @@ type methods struct {
 type methodCtxKey struct{}
 
 func methodFromContext(ctx context.Context) string {
-	return ctx.Value(methodCtxKey{}).(string)
+	method, ok := ctx.Value(methodCtxKey{}).(string)
+	if !ok {
+		return "<unknown>"
+	}
+	return method
 }
 
 func (m *methods) Address() (s1 string) {
