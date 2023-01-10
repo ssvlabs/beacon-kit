@@ -29,7 +29,8 @@ type Client struct {
 	spec    *beacon.Spec
 	options Options
 
-	blockRootSlots *blockRootSlots
+	blockRootSlots                  *blockRootSlots
+	bestAttestationSelectionTimeout time.Duration
 }
 
 func New(spec *beacon.Spec, poolClient *pool.Client, options Options) *Client {
@@ -43,7 +44,11 @@ func New(spec *beacon.Spec, poolClient *pool.Client, options Options) *Client {
 
 // BestAttestationDataSelection subscribes to block events to select
 // the best (rather than the first) AttestationData.
-func (c *Client) BestAttestationDataSelection(ctx context.Context) error {
+// secondaryTimeout is the timeout to use for secondary calls, after we already
+// have at least one AttestationData in hand.
+func (c *Client) BestAttestationDataSelection(ctx context.Context, secondaryTimeout time.Duration) error {
+	c.bestAttestationSelectionTimeout = secondaryTimeout
+
 	err := c.EventsWithClient(ctx, []string{"block"}, func(client beacon.Client, e *api.Event) {
 		// log.Printf("GotBlockEventData: %#v", e.Data)
 		if e.Data == nil {
@@ -92,6 +97,7 @@ func (c *Client) AttestationData(ctx context.Context, slot phase0.Slot, committe
 		bestDataClient string
 		mu             sync.Mutex
 	)
+	ctx, cancel := context.WithCancel(ctx)
 	err := c.With(pool.FirstSuccess(false)).
 		Call(ctx, func(ctx context.Context, client beacon.Client) error {
 			data, err := client.AttestationData(ctx, slot, committeeIndex)
@@ -103,7 +109,6 @@ func (c *Client) AttestationData(ctx context.Context, slot phase0.Slot, committe
 			}
 
 			dataSlot, _ := c.blockRootSlots.Get(data.BeaconBlockRoot)
-			// log.Printf("FoundSlotForAttestation: %#x -> %d", data.BeaconBlockRoot, dataSlot)
 
 			logging.FromContext(ctx).Debug("Scoring AttestationData",
 				zap.String("client", client.Address()),
@@ -114,9 +119,8 @@ func (c *Client) AttestationData(ctx context.Context, slot phase0.Slot, committe
 				mu.Lock()
 				defer mu.Unlock()
 				if bestData == nil || dataSlot > bestDataSlot {
+					// Log that we found a better AttestationData.
 					if bestData != nil && dataSlot > bestDataSlot {
-						// log.Printf("SelectedBetterAttestation: %d>%d — %#x (((VERSUS))) %#x", dataSlot, bestDataSlot, data.BeaconBlockRoot, bestData.BeaconBlockRoot)
-
 						logging.FromContext(ctx).Debug("Better AttestationData detected",
 							zap.String("client", bestDataClient),
 							zap.String("block_root", fmt.Sprintf("%#x", bestData.BeaconBlockRoot)),
@@ -129,6 +133,21 @@ func (c *Client) AttestationData(ctx context.Context, slot phase0.Slot, committe
 					bestData = data
 					bestDataSlot = dataSlot
 					bestDataClient = client.Address()
+
+					// Start a new timeout for other calls.
+					go func() {
+						select {
+						case <-ctx.Done():
+							return
+						case <-time.After(c.bestAttestationSelectionTimeout):
+							cancel()
+						}
+					}()
+
+					if bestDataSlot == slot {
+						// Cancel all other calls, we found the best AttestationData.
+						cancel()
+					}
 				}
 			}()
 			return nil

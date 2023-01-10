@@ -168,6 +168,9 @@ func (c *call) receiveCalls(ctx context.Context, jobs chan<- int, logs <-chan *C
 	for {
 		select {
 		case <-ctx.Done():
+			logging.FromContext(ctx).Debug(fmt.Sprintf("ClientCall/%s: context cancelled", methodFromContext(ctx)),
+				zap.String("method", methodFromContext(ctx)),
+				zap.Error(ctx.Err()))
 			return nil
 		case log, ok := <-logs:
 			if !ok {
@@ -181,6 +184,7 @@ func (c *call) receiveCalls(ctx context.Context, jobs chan<- int, logs <-chan *C
 				fmt.Sprintf("ClientCall/%s", methodFromContext(ctx)),
 				zap.Int("client_index", log.ClientIndex),
 				zap.Any("log", log),
+				zap.Bool("first_success", bool(c.scope.FirstSuccess)),
 			)
 
 			if log.Err != nil {
