@@ -118,6 +118,19 @@ func (c *Client) AttestationData(ctx context.Context, slot phase0.Slot, committe
 			func() {
 				mu.Lock()
 				defer mu.Unlock()
+
+				// Start a new timeout for other calls.
+				if bestData == nil {
+					go func() {
+						select {
+						case <-ctx.Done():
+							return
+						case <-time.After(c.bestAttestationSelectionTimeout):
+							cancel()
+						}
+					}()
+				}
+
 				if bestData == nil || dataSlot > bestDataSlot {
 					// Log that we found a better AttestationData.
 					if bestData != nil && dataSlot > bestDataSlot {
@@ -134,18 +147,8 @@ func (c *Client) AttestationData(ctx context.Context, slot phase0.Slot, committe
 					bestDataSlot = dataSlot
 					bestDataClient = client.Address()
 
-					// Start a new timeout for other calls.
-					go func() {
-						select {
-						case <-ctx.Done():
-							return
-						case <-time.After(c.bestAttestationSelectionTimeout):
-							cancel()
-						}
-					}()
-
 					if bestDataSlot == slot {
-						// Cancel all other calls, we found the best AttestationData.
+						// Cancel all other calls, we found the best possible AttestationData.
 						cancel()
 					}
 				}
