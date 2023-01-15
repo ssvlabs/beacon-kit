@@ -119,7 +119,10 @@ func (c *Client) AttestationData(ctx context.Context, slot phase0.Slot, committe
 				mu.Lock()
 				defer mu.Unlock()
 
-				// Start a new timeout for other calls.
+				// Now that we've got the first AttestationData, we're less eager to
+				// wait for the other clients to respond.
+				//
+				// Start a timer to cancel other calls early.
 				if bestData == nil {
 					go func() {
 						select {
@@ -147,6 +150,7 @@ func (c *Client) AttestationData(ctx context.Context, slot phase0.Slot, committe
 					bestDataSlot = dataSlot
 					bestDataClient = client.Address()
 
+					// TODO: research if this is a good idea.
 					// if bestDataSlot == slot {
 					// 	// Cancel all other calls, we found the best possible AttestationData.
 					// 	cancel()
