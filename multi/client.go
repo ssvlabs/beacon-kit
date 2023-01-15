@@ -147,10 +147,10 @@ func (c *Client) AttestationData(ctx context.Context, slot phase0.Slot, committe
 					bestDataSlot = dataSlot
 					bestDataClient = client.Address()
 
-					if bestDataSlot == slot {
-						// Cancel all other calls, we found the best possible AttestationData.
-						cancel()
-					}
+					// if bestDataSlot == slot {
+					// 	// Cancel all other calls, we found the best possible AttestationData.
+					// 	cancel()
+					// }
 				}
 			}()
 			return nil
