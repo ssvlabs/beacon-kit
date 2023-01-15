@@ -42,12 +42,14 @@ func New(spec *beacon.Spec, poolClient *pool.Client, options Options) *Client {
 	}
 }
 
-// BestAttestationDataSelection subscribes to block events to select
-// the best (rather than the first) AttestationData.
-// secondaryTimeout is the timeout to use for secondary calls, after we already
-// have at least one AttestationData in hand.
-func (c *Client) BestAttestationDataSelection(ctx context.Context, secondaryTimeout time.Duration) error {
-	c.bestAttestationSelectionTimeout = secondaryTimeout
+// BestAttestationDataSelection subscribes to block events to
+// select the best (rather than the first) AttestationData.
+//
+// earlyTimeout is fired once the first AttestationData is received,
+// cancelling the context for any ongoing calls, and preventing
+// us from waiting for slow/stuck clients.
+func (c *Client) BestAttestationDataSelection(ctx context.Context, earlyTimeout time.Duration) error {
+	c.bestAttestationSelectionTimeout = earlyTimeout
 
 	err := c.EventsWithClient(ctx, []string{"block"}, func(client beacon.Client, e *api.Event) {
 		// log.Printf("GotBlockEventData: %#v", e.Data)
