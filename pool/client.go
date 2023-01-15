@@ -32,7 +32,7 @@ type state struct {
 type Client struct {
 	*state
 	scope Scope
-	*methods
+	methods
 }
 
 // New creates a new Client with the given clients and options.
@@ -48,7 +48,7 @@ func New(clients []beacon.Client, options ...interface{}) *Client {
 		},
 		scope: *scope,
 	}
-	client.methods = &methods{
+	client.methods = methods{
 		defaultClient: client.defaultClient,
 		callFunc:      client.Call,
 	}
@@ -102,6 +102,13 @@ func (c *Client) Scope() Scope {
 func (c *Client) With(options ...interface{}) *Client {
 	copy := *c
 	copy.scope.apply(options...)
+
+	// Update the methods to call the copy.
+	copy.methods = methods{
+		defaultClient: copy.defaultClient,
+		callFunc:      copy.Call,
+	}
+
 	return &copy
 }
 
