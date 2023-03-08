@@ -161,7 +161,13 @@ func (c *Client) AttestationData(ctx context.Context, slot phase0.Slot, committe
 			}()
 			return nil
 		})
-	return bestData, err
+
+	// If at least one of the calls succeeded, return the best AttestationData, ignoring any errors.
+	if bestData != nil {
+		return bestData, nil
+	}
+
+	return nil, err
 }
 
 func (c *Client) SubmitBeaconCommitteeSubscriptions(ctx context.Context, subscriptions []*api.BeaconCommitteeSubscription) error {
