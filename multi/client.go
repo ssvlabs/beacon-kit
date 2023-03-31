@@ -99,7 +99,11 @@ func (c *Client) AttestationData(ctx context.Context, slot phase0.Slot, committe
 		bestDataClient string
 		mu             sync.Mutex
 	)
+
 	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+	parentCtx := ctx
+
 	err := c.With(pool.FirstSuccess(false)).
 		Call(ctx, func(ctx context.Context, client beacon.Client) error {
 			data, err := client.AttestationData(ctx, slot, committeeIndex)
@@ -128,8 +132,7 @@ func (c *Client) AttestationData(ctx context.Context, slot phase0.Slot, committe
 				if bestData == nil {
 					go func() {
 						select {
-						case <-ctx.Done():
-							return
+						case <-parentCtx.Done():
 						case <-time.After(c.bestAttestationSelectionTimeout):
 							cancel()
 						}

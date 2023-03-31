@@ -3,6 +3,7 @@ package multi
 import (
 	"context"
 	"testing"
+	"time"
 
 	"github.com/attestantio/go-eth2-client/spec/phase0"
 	"github.com/bloxapp/beacon-kit"
@@ -52,4 +53,43 @@ func TestSubmitAttestations(t *testing.T) {
 	for _, c := range mockClients {
 		c.(*mocks.Client).AssertCalled(t, "SubmitAttestations", mock.Anything, []*phase0.Attestation{})
 	}
+}
+
+func TestBestAttestationDataSelection(t *testing.T) {
+	const (
+		timeout      = 1 * time.Second
+		earlyTimeout = 100 * time.Millisecond
+	)
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
+	defer cancel()
+
+	// Create an offline client (which will never return).
+	offlineClient := mocks.NewClient(t)
+	offlineClient.On("Address", mock.Anything).Return("offline")
+	offlineClient.On("AttestationData", mock.Anything, mock.Anything, mock.Anything).Run(func(args mock.Arguments) {
+		<-args.Get(0).(context.Context).Done()
+	}).Return(nil, context.Canceled)
+
+	// Create an online client (which will return immediately).
+	onlineClient := mocks.NewClient(t)
+	onlineClient.On("Address", mock.Anything).Return("online")
+	onlineClient.On("AttestationData", mock.Anything, mock.Anything, mock.Anything).Return(&phase0.AttestationData{}, nil)
+
+	// Create a multi.Client with BestAttestationDataSelection.
+	client := New(
+		beacon.Mainnet,
+		pool.New([]beacon.Client{offlineClient, onlineClient}, nil, pool.FirstSuccess(true), pool.SelectAll(), pool.Concurrency(2)),
+		Options{},
+	)
+	err := client.BestAttestationDataSelection(ctx, earlyTimeout)
+	require.NoError(t, err)
+
+	// Check that earlyTimeout is respected.
+	start := time.Now()
+	data, err := client.AttestationData(ctx, 0, 0)
+	require.NoError(t, err)
+	require.NotNil(t, data)
+	took := time.Since(start)
+	require.True(t, took >= earlyTimeout, "exited too early!")
+	require.True(t, took < earlyTimeout+(earlyTimeout/2), "exited too late!")
 }
