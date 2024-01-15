@@ -15,7 +15,7 @@ type Client interface {
 	Address() string
 
 	eth2client.SpecProvider
-	eth2client.GenesisTimeProvider
+	eth2client.GenesisProvider
 	eth2client.BeaconBlockRootProvider
 	eth2client.SignedBeaconBlockProvider
 	eth2client.BeaconBlockHeadersProvider
@@ -29,10 +29,10 @@ type Client interface {
 
 	eth2client.ProposalPreparationsSubmitter
 	eth2client.ValidatorRegistrationsSubmitter
-	eth2client.BeaconBlockProposalProvider
-	eth2client.BeaconBlockSubmitter
-	eth2client.BlindedBeaconBlockProposalProvider
-	eth2client.BlindedBeaconBlockSubmitter
+	eth2client.ProposalProvider
+	eth2client.ProposalSubmitter
+	eth2client.BlindedProposalProvider
+	eth2client.BlindedProposalSubmitter
 
 	eth2client.BeaconCommitteeSubscriptionsSubmitter
 	eth2client.AttestationDataProvider

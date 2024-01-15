@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"strings"
-	"time"
 
 	eth2client "github.com/attestantio/go-eth2-client"
 	"github.com/attestantio/go-eth2-client/api"
@@ -17,6 +16,9 @@ import (
 
 // ErrCallNotSupported is returned when the implementation does not support the requested call.
 var ErrCallNotSupported = errors.New("call not supported")
+
+// ErrEmptyResponse is returned when the client did not receive a response.
+var ErrEmptyResponse = errors.New("empty response")
 
 // Client implements beacon.Client using the go-eth2-client package.
 type Client struct {
@@ -46,11 +48,25 @@ func (c *Client) Address() string {
 }
 
 func (c *Client) Spec(ctx context.Context) (map[string]interface{}, error) {
-	return c.service.(eth2client.SpecProvider).Spec(ctx)
+	resp, err := c.service.(eth2client.SpecProvider).Spec(ctx, &api.SpecOpts{})
+	if err != nil {
+		return nil, err
+	}
+	if resp == nil {
+		return nil, ErrEmptyResponse
+	}
+	return resp.Data, nil
 }
 
-func (c *Client) GenesisTime(ctx context.Context) (time.Time, error) {
-	return c.service.(eth2client.GenesisTimeProvider).GenesisTime(ctx)
+func (c *Client) Genesis(ctx context.Context) (*apiv1.Genesis, error) {
+	resp, err := c.service.(eth2client.GenesisProvider).Genesis(ctx, &api.GenesisOpts{})
+	if err != nil {
+		return nil, err
+	}
+	if resp == nil {
+		return nil, ErrEmptyResponse
+	}
+	return resp.Data, nil
 }
 
 func (c *Client) BeaconBlockRoot(ctx context.Context, blockID string) (*phase0.Root, error) {
@@ -58,7 +74,14 @@ func (c *Client) BeaconBlockRoot(ctx context.Context, blockID string) (*phase0.R
 	if !ok {
 		return nil, ErrCallNotSupported
 	}
-	return provider.BeaconBlockRoot(ctx, blockID)
+	resp, err := provider.BeaconBlockRoot(ctx, &api.BeaconBlockRootOpts{Block: blockID})
+	if err != nil {
+		return nil, err
+	}
+	if resp == nil {
+		return nil, ErrEmptyResponse
+	}
+	return resp.Data, nil
 }
 
 func (c *Client) SignedBeaconBlock(ctx context.Context, blockID string) (*spec.VersionedSignedBeaconBlock, error) {
@@ -66,7 +89,8 @@ func (c *Client) SignedBeaconBlock(ctx context.Context, blockID string) (*spec.V
 	if !ok {
 		return nil, ErrCallNotSupported
 	}
-	block, err := provider.SignedBeaconBlock(ctx, blockID)
+	var block *spec.VersionedSignedBeaconBlock
+	response, err := provider.SignedBeaconBlock(ctx, &api.SignedBeaconBlockOpts{Block: blockID})
 	if err != nil {
 		// Hack to gracefully handle missing blocks from Prysm.
 		notFound := false
@@ -83,7 +107,8 @@ func (c *Client) SignedBeaconBlock(ctx context.Context, blockID string) (*spec.V
 		if !notFound {
 			return nil, err
 		}
-		block = nil
+	} else {
+		block = response.Data
 	}
 	if block == nil {
 		return nil, beacon.ErrBlockNotFound
@@ -96,7 +121,14 @@ func (c *Client) BeaconBlockHeader(ctx context.Context, blockID string) (*apiv1.
 	if !ok {
 		return nil, ErrCallNotSupported
 	}
-	return provider.BeaconBlockHeader(ctx, blockID)
+	resp, err := provider.BeaconBlockHeader(ctx, &api.BeaconBlockHeaderOpts{Block: blockID})
+	if err != nil {
+		return nil, err
+	}
+	if resp == nil {
+		return nil, ErrEmptyResponse
+	}
+	return resp.Data, nil
 }
 
 func (c *Client) ProposerDuties(ctx context.Context, epoch phase0.Epoch, indices []phase0.ValidatorIndex) ([]*apiv1.ProposerDuty, error) {
@@ -104,7 +136,14 @@ func (c *Client) ProposerDuties(ctx context.Context, epoch phase0.Epoch, indices
 	if !ok {
 		return nil, ErrCallNotSupported
 	}
-	return provider.ProposerDuties(ctx, epoch, indices)
+	resp, err := provider.ProposerDuties(ctx, &api.ProposerDutiesOpts{Epoch: epoch, Indices: indices})
+	if err != nil {
+		return nil, err
+	}
+	if resp == nil {
+		return nil, ErrEmptyResponse
+	}
+	return resp.Data, nil
 }
 
 func (c *Client) AttesterDuties(ctx context.Context, epoch phase0.Epoch, indices []phase0.ValidatorIndex) ([]*apiv1.AttesterDuty, error) {
@@ -112,7 +151,14 @@ func (c *Client) AttesterDuties(ctx context.Context, epoch phase0.Epoch, indices
 	if !ok {
 		return nil, ErrCallNotSupported
 	}
-	return provider.AttesterDuties(ctx, epoch, indices)
+	resp, err := provider.AttesterDuties(ctx, &api.AttesterDutiesOpts{Epoch: epoch, Indices: indices})
+	if err != nil {
+		return nil, err
+	}
+	if resp == nil {
+		return nil, ErrEmptyResponse
+	}
+	return resp.Data, nil
 }
 
 func (c *Client) SyncCommitteeDuties(ctx context.Context, epoch phase0.Epoch, indices []phase0.ValidatorIndex) ([]*apiv1.SyncCommitteeDuty, error) {
@@ -120,7 +166,14 @@ func (c *Client) SyncCommitteeDuties(ctx context.Context, epoch phase0.Epoch, in
 	if !ok {
 		return nil, ErrCallNotSupported
 	}
-	return provider.SyncCommitteeDuties(ctx, epoch, indices)
+	resp, err := provider.SyncCommitteeDuties(ctx, &api.SyncCommitteeDutiesOpts{Epoch: epoch, Indices: indices})
+	if err != nil {
+		return nil, err
+	}
+	if resp == nil {
+		return nil, ErrEmptyResponse
+	}
+	return resp.Data, nil
 }
 
 func (c *Client) Domain(ctx context.Context, domainType phase0.DomainType, epoch phase0.Epoch) (phase0.Domain, error) {
@@ -136,7 +189,14 @@ func (c *Client) Validators(ctx context.Context, stateID string, indices []phase
 	if !ok {
 		return nil, ErrCallNotSupported
 	}
-	return provider.Validators(ctx, stateID, indices)
+	resp, err := provider.Validators(ctx, &api.ValidatorsOpts{State: stateID, Indices: indices})
+	if err != nil {
+		return nil, err
+	}
+	if resp == nil {
+		return nil, ErrEmptyResponse
+	}
+	return resp.Data, nil
 }
 
 func (c *Client) ValidatorsByPubKey(ctx context.Context, stateID string, validatorPubKeys []phase0.BLSPubKey) (map[phase0.ValidatorIndex]*apiv1.Validator, error) {
@@ -144,7 +204,14 @@ func (c *Client) ValidatorsByPubKey(ctx context.Context, stateID string, validat
 	if !ok {
 		return nil, ErrCallNotSupported
 	}
-	return provider.ValidatorsByPubKey(ctx, stateID, validatorPubKeys)
+	resp, err := provider.Validators(ctx, &api.ValidatorsOpts{State: stateID, PubKeys: validatorPubKeys})
+	if err != nil {
+		return nil, err
+	}
+	if resp == nil {
+		return nil, ErrEmptyResponse
+	}
+	return resp.Data, nil
 }
 
 func (c *Client) SubmitProposalPreparations(ctx context.Context, preparations []*apiv1.ProposalPreparation) error {
@@ -163,12 +230,19 @@ func (c *Client) SubmitValidatorRegistrations(ctx context.Context, registrations
 	return provider.SubmitValidatorRegistrations(ctx, registrations)
 }
 
-func (c *Client) BeaconBlockProposal(ctx context.Context, slot phase0.Slot, randaoReveal phase0.BLSSignature, graffiti []byte) (*spec.VersionedBeaconBlock, error) {
-	provider, ok := c.service.(eth2client.BeaconBlockProposalProvider)
+func (c *Client) Proposal(ctx context.Context, slot phase0.Slot, randaoReveal phase0.BLSSignature, graffiti [32]byte) (*api.VersionedProposal, error) {
+	provider, ok := c.service.(eth2client.ProposalProvider)
 	if !ok {
 		return nil, ErrCallNotSupported
 	}
-	return provider.BeaconBlockProposal(ctx, slot, randaoReveal, graffiti)
+	resp, err := provider.Proposal(ctx, &api.ProposalOpts{Slot: slot, RandaoReveal: randaoReveal, Graffiti: graffiti})
+	if err != nil {
+		return nil, err
+	}
+	if resp == nil {
+		return nil, ErrEmptyResponse
+	}
+	return resp.Data, nil
 }
 
 func (c *Client) SubmitBeaconBlock(ctx context.Context, block *spec.VersionedSignedBeaconBlock) error {
@@ -179,12 +253,19 @@ func (c *Client) SubmitBeaconBlock(ctx context.Context, block *spec.VersionedSig
 	return provider.SubmitBeaconBlock(ctx, block)
 }
 
-func (c *Client) BlindedBeaconBlockProposal(ctx context.Context, slot phase0.Slot, randaoReveal phase0.BLSSignature, graffiti []byte) (*api.VersionedBlindedBeaconBlock, error) {
-	provider, ok := c.service.(eth2client.BlindedBeaconBlockProposalProvider)
+func (c *Client) BlindedProposal(ctx context.Context, slot phase0.Slot, randaoReveal phase0.BLSSignature, graffiti [32]byte) (*api.VersionedBlindedProposal, error) {
+	provider, ok := c.service.(eth2client.BlindedProposalProvider)
 	if !ok {
 		return nil, ErrCallNotSupported
 	}
-	return provider.BlindedBeaconBlockProposal(ctx, slot, randaoReveal, graffiti)
+	resp, err := provider.BlindedProposal(ctx, &api.BlindedProposalOpts{Slot: slot, RandaoReveal: randaoReveal, Graffiti: graffiti})
+	if err != nil {
+		return nil, err
+	}
+	if resp == nil {
+		return nil, ErrEmptyResponse
+	}
+	return resp.Data, nil
 }
 
 // SubmitBlindedBeaconBlock provides a mock function with given fields: ctx, block
@@ -209,7 +290,14 @@ func (c *Client) AttestationData(ctx context.Context, slot phase0.Slot, committe
 	if !ok {
 		return nil, ErrCallNotSupported
 	}
-	return provider.AttestationData(ctx, slot, committeeIndex)
+	resp, err := provider.AttestationData(ctx, &api.AttestationDataOpts{Slot: slot, CommitteeIndex: committeeIndex})
+	if err != nil {
+		return nil, err
+	}
+	if resp == nil {
+		return nil, ErrEmptyResponse
+	}
+	return resp.Data, nil
 }
 
 func (c *Client) SubmitAttestations(ctx context.Context, attestations []*phase0.Attestation) error {
@@ -225,7 +313,14 @@ func (c *Client) AggregateAttestation(ctx context.Context, slot phase0.Slot, att
 	if !ok {
 		return nil, ErrCallNotSupported
 	}
-	return provider.AggregateAttestation(ctx, slot, attestationDataRoot)
+	resp, err := provider.AggregateAttestation(ctx, &api.AggregateAttestationOpts{Slot: slot, AttestationDataRoot: attestationDataRoot})
+	if err != nil {
+		return nil, err
+	}
+	if resp == nil {
+		return nil, ErrEmptyResponse
+	}
+	return resp.Data, nil
 }
 
 func (c *Client) SubmitAggregateAttestations(ctx context.Context, aggregateAndProofs []*phase0.SignedAggregateAndProof) error {
@@ -257,7 +352,14 @@ func (c *Client) SyncCommitteeContribution(ctx context.Context, slot phase0.Slot
 	if !ok {
 		return nil, ErrCallNotSupported
 	}
-	return provider.SyncCommitteeContribution(ctx, slot, subcommitteeIndex, beaconBlockRoot)
+	resp, err := provider.SyncCommitteeContribution(ctx, &api.SyncCommitteeContributionOpts{Slot: slot, SubcommitteeIndex: subcommitteeIndex, BeaconBlockRoot: beaconBlockRoot})
+	if err != nil {
+		return nil, err
+	}
+	if resp == nil {
+		return nil, ErrEmptyResponse
+	}
+	return resp.Data, nil
 }
 
 func (c *Client) SubmitSyncCommitteeContributions(ctx context.Context, contributionAndProofs []*altair.SignedContributionAndProof) error {
