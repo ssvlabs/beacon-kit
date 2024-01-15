@@ -184,6 +184,14 @@ func (c *Client) Domain(ctx context.Context, domainType phase0.DomainType, epoch
 	return provider.Domain(ctx, domainType, epoch)
 }
 
+func (c *Client) GenesisDomain(ctx context.Context, domainType phase0.DomainType) (phase0.Domain, error) {
+	provider, ok := c.service.(eth2client.DomainProvider)
+	if !ok {
+		return phase0.Domain{}, ErrCallNotSupported
+	}
+	return provider.GenesisDomain(ctx, domainType)
+}
+
 func (c *Client) Validators(ctx context.Context, opts *api.ValidatorsOpts) (*api.Response[map[phase0.ValidatorIndex]*apiv1.Validator], error) {
 	provider, ok := c.service.(eth2client.ValidatorsProvider)
 	if !ok {
