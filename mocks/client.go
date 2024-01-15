@@ -6,8 +6,6 @@ import (
 	api "github.com/attestantio/go-eth2-client/api"
 	altair "github.com/attestantio/go-eth2-client/spec/altair"
 
-	client "github.com/attestantio/go-eth2-client"
-
 	context "context"
 
 	mock "github.com/stretchr/testify/mock"
@@ -42,29 +40,29 @@ func (_m *Client) Address() string {
 	return r0
 }
 
-// AggregateAttestation provides a mock function with given fields: ctx, slot, attestationDataRoot
-func (_m *Client) AggregateAttestation(ctx context.Context, slot phase0.Slot, attestationDataRoot phase0.Root) (*phase0.Attestation, error) {
-	ret := _m.Called(ctx, slot, attestationDataRoot)
+// AggregateAttestation provides a mock function with given fields: ctx, opts
+func (_m *Client) AggregateAttestation(ctx context.Context, opts *api.AggregateAttestationOpts) (*api.Response[*phase0.Attestation], error) {
+	ret := _m.Called(ctx, opts)
 
 	if len(ret) == 0 {
 		panic("no return value specified for AggregateAttestation")
 	}
 
-	var r0 *phase0.Attestation
+	var r0 *api.Response[*phase0.Attestation]
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, phase0.Slot, phase0.Root) (*phase0.Attestation, error)); ok {
-		return rf(ctx, slot, attestationDataRoot)
+	if rf, ok := ret.Get(0).(func(context.Context, *api.AggregateAttestationOpts) (*api.Response[*phase0.Attestation], error)); ok {
+		return rf(ctx, opts)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, phase0.Slot, phase0.Root) *phase0.Attestation); ok {
-		r0 = rf(ctx, slot, attestationDataRoot)
+	if rf, ok := ret.Get(0).(func(context.Context, *api.AggregateAttestationOpts) *api.Response[*phase0.Attestation]); ok {
+		r0 = rf(ctx, opts)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*phase0.Attestation)
+			r0 = ret.Get(0).(*api.Response[*phase0.Attestation])
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, phase0.Slot, phase0.Root) error); ok {
-		r1 = rf(ctx, slot, attestationDataRoot)
+	if rf, ok := ret.Get(1).(func(context.Context, *api.AggregateAttestationOpts) error); ok {
+		r1 = rf(ctx, opts)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -72,29 +70,29 @@ func (_m *Client) AggregateAttestation(ctx context.Context, slot phase0.Slot, at
 	return r0, r1
 }
 
-// AttestationData provides a mock function with given fields: ctx, slot, committeeIndex
-func (_m *Client) AttestationData(ctx context.Context, slot phase0.Slot, committeeIndex phase0.CommitteeIndex) (*phase0.AttestationData, error) {
-	ret := _m.Called(ctx, slot, committeeIndex)
+// AttestationData provides a mock function with given fields: ctx, opts
+func (_m *Client) AttestationData(ctx context.Context, opts *api.AttestationDataOpts) (*api.Response[*phase0.AttestationData], error) {
+	ret := _m.Called(ctx, opts)
 
 	if len(ret) == 0 {
 		panic("no return value specified for AttestationData")
 	}
 
-	var r0 *phase0.AttestationData
+	var r0 *api.Response[*phase0.AttestationData]
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, phase0.Slot, phase0.CommitteeIndex) (*phase0.AttestationData, error)); ok {
-		return rf(ctx, slot, committeeIndex)
+	if rf, ok := ret.Get(0).(func(context.Context, *api.AttestationDataOpts) (*api.Response[*phase0.AttestationData], error)); ok {
+		return rf(ctx, opts)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, phase0.Slot, phase0.CommitteeIndex) *phase0.AttestationData); ok {
-		r0 = rf(ctx, slot, committeeIndex)
+	if rf, ok := ret.Get(0).(func(context.Context, *api.AttestationDataOpts) *api.Response[*phase0.AttestationData]); ok {
+		r0 = rf(ctx, opts)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*phase0.AttestationData)
+			r0 = ret.Get(0).(*api.Response[*phase0.AttestationData])
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, phase0.Slot, phase0.CommitteeIndex) error); ok {
-		r1 = rf(ctx, slot, committeeIndex)
+	if rf, ok := ret.Get(1).(func(context.Context, *api.AttestationDataOpts) error); ok {
+		r1 = rf(ctx, opts)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -102,29 +100,29 @@ func (_m *Client) AttestationData(ctx context.Context, slot phase0.Slot, committ
 	return r0, r1
 }
 
-// AttesterDuties provides a mock function with given fields: ctx, epoch, indices
-func (_m *Client) AttesterDuties(ctx context.Context, epoch phase0.Epoch, indices []phase0.ValidatorIndex) ([]*v1.AttesterDuty, error) {
-	ret := _m.Called(ctx, epoch, indices)
+// AttesterDuties provides a mock function with given fields: ctx, opts
+func (_m *Client) AttesterDuties(ctx context.Context, opts *api.AttesterDutiesOpts) (*api.Response[[]*v1.AttesterDuty], error) {
+	ret := _m.Called(ctx, opts)
 
 	if len(ret) == 0 {
 		panic("no return value specified for AttesterDuties")
 	}
 
-	var r0 []*v1.AttesterDuty
+	var r0 *api.Response[[]*v1.AttesterDuty]
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, phase0.Epoch, []phase0.ValidatorIndex) ([]*v1.AttesterDuty, error)); ok {
-		return rf(ctx, epoch, indices)
+	if rf, ok := ret.Get(0).(func(context.Context, *api.AttesterDutiesOpts) (*api.Response[[]*v1.AttesterDuty], error)); ok {
+		return rf(ctx, opts)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, phase0.Epoch, []phase0.ValidatorIndex) []*v1.AttesterDuty); ok {
-		r0 = rf(ctx, epoch, indices)
+	if rf, ok := ret.Get(0).(func(context.Context, *api.AttesterDutiesOpts) *api.Response[[]*v1.AttesterDuty]); ok {
+		r0 = rf(ctx, opts)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]*v1.AttesterDuty)
+			r0 = ret.Get(0).(*api.Response[[]*v1.AttesterDuty])
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, phase0.Epoch, []phase0.ValidatorIndex) error); ok {
-		r1 = rf(ctx, epoch, indices)
+	if rf, ok := ret.Get(1).(func(context.Context, *api.AttesterDutiesOpts) error); ok {
+		r1 = rf(ctx, opts)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -132,29 +130,29 @@ func (_m *Client) AttesterDuties(ctx context.Context, epoch phase0.Epoch, indice
 	return r0, r1
 }
 
-// BeaconBlockHeader provides a mock function with given fields: ctx, blockID
-func (_m *Client) BeaconBlockHeader(ctx context.Context, blockID string) (*v1.BeaconBlockHeader, error) {
-	ret := _m.Called(ctx, blockID)
+// BeaconBlockHeader provides a mock function with given fields: ctx, opts
+func (_m *Client) BeaconBlockHeader(ctx context.Context, opts *api.BeaconBlockHeaderOpts) (*api.Response[*v1.BeaconBlockHeader], error) {
+	ret := _m.Called(ctx, opts)
 
 	if len(ret) == 0 {
 		panic("no return value specified for BeaconBlockHeader")
 	}
 
-	var r0 *v1.BeaconBlockHeader
+	var r0 *api.Response[*v1.BeaconBlockHeader]
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, string) (*v1.BeaconBlockHeader, error)); ok {
-		return rf(ctx, blockID)
+	if rf, ok := ret.Get(0).(func(context.Context, *api.BeaconBlockHeaderOpts) (*api.Response[*v1.BeaconBlockHeader], error)); ok {
+		return rf(ctx, opts)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, string) *v1.BeaconBlockHeader); ok {
-		r0 = rf(ctx, blockID)
+	if rf, ok := ret.Get(0).(func(context.Context, *api.BeaconBlockHeaderOpts) *api.Response[*v1.BeaconBlockHeader]); ok {
+		r0 = rf(ctx, opts)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*v1.BeaconBlockHeader)
+			r0 = ret.Get(0).(*api.Response[*v1.BeaconBlockHeader])
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
-		r1 = rf(ctx, blockID)
+	if rf, ok := ret.Get(1).(func(context.Context, *api.BeaconBlockHeaderOpts) error); ok {
+		r1 = rf(ctx, opts)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -162,29 +160,29 @@ func (_m *Client) BeaconBlockHeader(ctx context.Context, blockID string) (*v1.Be
 	return r0, r1
 }
 
-// BeaconBlockRoot provides a mock function with given fields: ctx, blockID
-func (_m *Client) BeaconBlockRoot(ctx context.Context, blockID string) (*phase0.Root, error) {
-	ret := _m.Called(ctx, blockID)
+// BeaconBlockRoot provides a mock function with given fields: ctx, opts
+func (_m *Client) BeaconBlockRoot(ctx context.Context, opts *api.BeaconBlockRootOpts) (*api.Response[*phase0.Root], error) {
+	ret := _m.Called(ctx, opts)
 
 	if len(ret) == 0 {
 		panic("no return value specified for BeaconBlockRoot")
 	}
 
-	var r0 *phase0.Root
+	var r0 *api.Response[*phase0.Root]
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, string) (*phase0.Root, error)); ok {
-		return rf(ctx, blockID)
+	if rf, ok := ret.Get(0).(func(context.Context, *api.BeaconBlockRootOpts) (*api.Response[*phase0.Root], error)); ok {
+		return rf(ctx, opts)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, string) *phase0.Root); ok {
-		r0 = rf(ctx, blockID)
+	if rf, ok := ret.Get(0).(func(context.Context, *api.BeaconBlockRootOpts) *api.Response[*phase0.Root]); ok {
+		r0 = rf(ctx, opts)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*phase0.Root)
+			r0 = ret.Get(0).(*api.Response[*phase0.Root])
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
-		r1 = rf(ctx, blockID)
+	if rf, ok := ret.Get(1).(func(context.Context, *api.BeaconBlockRootOpts) error); ok {
+		r1 = rf(ctx, opts)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -192,29 +190,29 @@ func (_m *Client) BeaconBlockRoot(ctx context.Context, blockID string) (*phase0.
 	return r0, r1
 }
 
-// BlindedProposal provides a mock function with given fields: ctx, slot, randaoReveal, graffiti
-func (_m *Client) BlindedProposal(ctx context.Context, slot phase0.Slot, randaoReveal phase0.BLSSignature, graffiti [32]byte) (*api.VersionedBlindedProposal, error) {
-	ret := _m.Called(ctx, slot, randaoReveal, graffiti)
+// BlindedProposal provides a mock function with given fields: ctx, opts
+func (_m *Client) BlindedProposal(ctx context.Context, opts *api.BlindedProposalOpts) (*api.Response[*api.VersionedBlindedProposal], error) {
+	ret := _m.Called(ctx, opts)
 
 	if len(ret) == 0 {
 		panic("no return value specified for BlindedProposal")
 	}
 
-	var r0 *api.VersionedBlindedProposal
+	var r0 *api.Response[*api.VersionedBlindedProposal]
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, phase0.Slot, phase0.BLSSignature, [32]byte) (*api.VersionedBlindedProposal, error)); ok {
-		return rf(ctx, slot, randaoReveal, graffiti)
+	if rf, ok := ret.Get(0).(func(context.Context, *api.BlindedProposalOpts) (*api.Response[*api.VersionedBlindedProposal], error)); ok {
+		return rf(ctx, opts)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, phase0.Slot, phase0.BLSSignature, [32]byte) *api.VersionedBlindedProposal); ok {
-		r0 = rf(ctx, slot, randaoReveal, graffiti)
+	if rf, ok := ret.Get(0).(func(context.Context, *api.BlindedProposalOpts) *api.Response[*api.VersionedBlindedProposal]); ok {
+		r0 = rf(ctx, opts)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*api.VersionedBlindedProposal)
+			r0 = ret.Get(0).(*api.Response[*api.VersionedBlindedProposal])
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, phase0.Slot, phase0.BLSSignature, [32]byte) error); ok {
-		r1 = rf(ctx, slot, randaoReveal, graffiti)
+	if rf, ok := ret.Get(1).(func(context.Context, *api.BlindedProposalOpts) error); ok {
+		r1 = rf(ctx, opts)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -252,47 +250,59 @@ func (_m *Client) Domain(ctx context.Context, domainType phase0.DomainType, epoc
 	return r0, r1
 }
 
-// Events provides a mock function with given fields: ctx, topics, handler
-func (_m *Client) Events(ctx context.Context, topics []string, handler client.EventHandlerFunc) error {
-	ret := _m.Called(ctx, topics, handler)
-
-	if len(ret) == 0 {
-		panic("no return value specified for Events")
-	}
-
-	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, []string, client.EventHandlerFunc) error); ok {
-		r0 = rf(ctx, topics, handler)
-	} else {
-		r0 = ret.Error(0)
-	}
-
-	return r0
-}
-
-// Genesis provides a mock function with given fields: ctx
-func (_m *Client) Genesis(ctx context.Context) (*v1.Genesis, error) {
-	ret := _m.Called(ctx)
+// Genesis provides a mock function with given fields: ctx, opts
+func (_m *Client) Genesis(ctx context.Context, opts *api.GenesisOpts) (*api.Response[*v1.Genesis], error) {
+	ret := _m.Called(ctx, opts)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Genesis")
 	}
 
-	var r0 *v1.Genesis
+	var r0 *api.Response[*v1.Genesis]
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context) (*v1.Genesis, error)); ok {
-		return rf(ctx)
+	if rf, ok := ret.Get(0).(func(context.Context, *api.GenesisOpts) (*api.Response[*v1.Genesis], error)); ok {
+		return rf(ctx, opts)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context) *v1.Genesis); ok {
-		r0 = rf(ctx)
+	if rf, ok := ret.Get(0).(func(context.Context, *api.GenesisOpts) *api.Response[*v1.Genesis]); ok {
+		r0 = rf(ctx, opts)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*v1.Genesis)
+			r0 = ret.Get(0).(*api.Response[*v1.Genesis])
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context) error); ok {
-		r1 = rf(ctx)
+	if rf, ok := ret.Get(1).(func(context.Context, *api.GenesisOpts) error); ok {
+		r1 = rf(ctx, opts)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GenesisDomain provides a mock function with given fields: ctx, domainType
+func (_m *Client) GenesisDomain(ctx context.Context, domainType phase0.DomainType) (phase0.Domain, error) {
+	ret := _m.Called(ctx, domainType)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GenesisDomain")
+	}
+
+	var r0 phase0.Domain
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, phase0.DomainType) (phase0.Domain, error)); ok {
+		return rf(ctx, domainType)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, phase0.DomainType) phase0.Domain); ok {
+		r0 = rf(ctx, domainType)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(phase0.Domain)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, phase0.DomainType) error); ok {
+		r1 = rf(ctx, domainType)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -318,29 +328,29 @@ func (_m *Client) Name() string {
 	return r0
 }
 
-// Proposal provides a mock function with given fields: ctx, slot, randaoReveal, graffiti
-func (_m *Client) Proposal(ctx context.Context, slot phase0.Slot, randaoReveal phase0.BLSSignature, graffiti [32]byte) (*api.VersionedProposal, error) {
-	ret := _m.Called(ctx, slot, randaoReveal, graffiti)
+// Proposal provides a mock function with given fields: ctx, opts
+func (_m *Client) Proposal(ctx context.Context, opts *api.ProposalOpts) (*api.Response[*api.VersionedProposal], error) {
+	ret := _m.Called(ctx, opts)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Proposal")
 	}
 
-	var r0 *api.VersionedProposal
+	var r0 *api.Response[*api.VersionedProposal]
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, phase0.Slot, phase0.BLSSignature, [32]byte) (*api.VersionedProposal, error)); ok {
-		return rf(ctx, slot, randaoReveal, graffiti)
+	if rf, ok := ret.Get(0).(func(context.Context, *api.ProposalOpts) (*api.Response[*api.VersionedProposal], error)); ok {
+		return rf(ctx, opts)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, phase0.Slot, phase0.BLSSignature, [32]byte) *api.VersionedProposal); ok {
-		r0 = rf(ctx, slot, randaoReveal, graffiti)
+	if rf, ok := ret.Get(0).(func(context.Context, *api.ProposalOpts) *api.Response[*api.VersionedProposal]); ok {
+		r0 = rf(ctx, opts)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*api.VersionedProposal)
+			r0 = ret.Get(0).(*api.Response[*api.VersionedProposal])
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, phase0.Slot, phase0.BLSSignature, [32]byte) error); ok {
-		r1 = rf(ctx, slot, randaoReveal, graffiti)
+	if rf, ok := ret.Get(1).(func(context.Context, *api.ProposalOpts) error); ok {
+		r1 = rf(ctx, opts)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -348,29 +358,29 @@ func (_m *Client) Proposal(ctx context.Context, slot phase0.Slot, randaoReveal p
 	return r0, r1
 }
 
-// ProposerDuties provides a mock function with given fields: ctx, epoch, indices
-func (_m *Client) ProposerDuties(ctx context.Context, epoch phase0.Epoch, indices []phase0.ValidatorIndex) ([]*v1.ProposerDuty, error) {
-	ret := _m.Called(ctx, epoch, indices)
+// ProposerDuties provides a mock function with given fields: ctx, opts
+func (_m *Client) ProposerDuties(ctx context.Context, opts *api.ProposerDutiesOpts) (*api.Response[[]*v1.ProposerDuty], error) {
+	ret := _m.Called(ctx, opts)
 
 	if len(ret) == 0 {
 		panic("no return value specified for ProposerDuties")
 	}
 
-	var r0 []*v1.ProposerDuty
+	var r0 *api.Response[[]*v1.ProposerDuty]
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, phase0.Epoch, []phase0.ValidatorIndex) ([]*v1.ProposerDuty, error)); ok {
-		return rf(ctx, epoch, indices)
+	if rf, ok := ret.Get(0).(func(context.Context, *api.ProposerDutiesOpts) (*api.Response[[]*v1.ProposerDuty], error)); ok {
+		return rf(ctx, opts)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, phase0.Epoch, []phase0.ValidatorIndex) []*v1.ProposerDuty); ok {
-		r0 = rf(ctx, epoch, indices)
+	if rf, ok := ret.Get(0).(func(context.Context, *api.ProposerDutiesOpts) *api.Response[[]*v1.ProposerDuty]); ok {
+		r0 = rf(ctx, opts)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]*v1.ProposerDuty)
+			r0 = ret.Get(0).(*api.Response[[]*v1.ProposerDuty])
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, phase0.Epoch, []phase0.ValidatorIndex) error); ok {
-		r1 = rf(ctx, epoch, indices)
+	if rf, ok := ret.Get(1).(func(context.Context, *api.ProposerDutiesOpts) error); ok {
+		r1 = rf(ctx, opts)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -378,29 +388,29 @@ func (_m *Client) ProposerDuties(ctx context.Context, epoch phase0.Epoch, indice
 	return r0, r1
 }
 
-// SignedBeaconBlock provides a mock function with given fields: ctx, blockID
-func (_m *Client) SignedBeaconBlock(ctx context.Context, blockID string) (*spec.VersionedSignedBeaconBlock, error) {
-	ret := _m.Called(ctx, blockID)
+// SignedBeaconBlock provides a mock function with given fields: ctx, opts
+func (_m *Client) SignedBeaconBlock(ctx context.Context, opts *api.SignedBeaconBlockOpts) (*api.Response[*spec.VersionedSignedBeaconBlock], error) {
+	ret := _m.Called(ctx, opts)
 
 	if len(ret) == 0 {
 		panic("no return value specified for SignedBeaconBlock")
 	}
 
-	var r0 *spec.VersionedSignedBeaconBlock
+	var r0 *api.Response[*spec.VersionedSignedBeaconBlock]
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, string) (*spec.VersionedSignedBeaconBlock, error)); ok {
-		return rf(ctx, blockID)
+	if rf, ok := ret.Get(0).(func(context.Context, *api.SignedBeaconBlockOpts) (*api.Response[*spec.VersionedSignedBeaconBlock], error)); ok {
+		return rf(ctx, opts)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, string) *spec.VersionedSignedBeaconBlock); ok {
-		r0 = rf(ctx, blockID)
+	if rf, ok := ret.Get(0).(func(context.Context, *api.SignedBeaconBlockOpts) *api.Response[*spec.VersionedSignedBeaconBlock]); ok {
+		r0 = rf(ctx, opts)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*spec.VersionedSignedBeaconBlock)
+			r0 = ret.Get(0).(*api.Response[*spec.VersionedSignedBeaconBlock])
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
-		r1 = rf(ctx, blockID)
+	if rf, ok := ret.Get(1).(func(context.Context, *api.SignedBeaconBlockOpts) error); ok {
+		r1 = rf(ctx, opts)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -408,29 +418,29 @@ func (_m *Client) SignedBeaconBlock(ctx context.Context, blockID string) (*spec.
 	return r0, r1
 }
 
-// Spec provides a mock function with given fields: ctx
-func (_m *Client) Spec(ctx context.Context) (map[string]interface{}, error) {
-	ret := _m.Called(ctx)
+// Spec provides a mock function with given fields: ctx, opts
+func (_m *Client) Spec(ctx context.Context, opts *api.SpecOpts) (*api.Response[map[string]interface{}], error) {
+	ret := _m.Called(ctx, opts)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Spec")
 	}
 
-	var r0 map[string]interface{}
+	var r0 *api.Response[map[string]interface{}]
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context) (map[string]interface{}, error)); ok {
-		return rf(ctx)
+	if rf, ok := ret.Get(0).(func(context.Context, *api.SpecOpts) (*api.Response[map[string]interface{}], error)); ok {
+		return rf(ctx, opts)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context) map[string]interface{}); ok {
-		r0 = rf(ctx)
+	if rf, ok := ret.Get(0).(func(context.Context, *api.SpecOpts) *api.Response[map[string]interface{}]); ok {
+		r0 = rf(ctx, opts)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(map[string]interface{})
+			r0 = ret.Get(0).(*api.Response[map[string]interface{}])
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context) error); ok {
-		r1 = rf(ctx)
+	if rf, ok := ret.Get(1).(func(context.Context, *api.SpecOpts) error); ok {
+		r1 = rf(ctx, opts)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -474,24 +484,6 @@ func (_m *Client) SubmitAttestations(ctx context.Context, attestations []*phase0
 	return r0
 }
 
-// SubmitBeaconBlock provides a mock function with given fields: ctx, block
-func (_m *Client) SubmitBeaconBlock(ctx context.Context, block *spec.VersionedSignedBeaconBlock) error {
-	ret := _m.Called(ctx, block)
-
-	if len(ret) == 0 {
-		panic("no return value specified for SubmitBeaconBlock")
-	}
-
-	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, *spec.VersionedSignedBeaconBlock) error); ok {
-		r0 = rf(ctx, block)
-	} else {
-		r0 = ret.Error(0)
-	}
-
-	return r0
-}
-
 // SubmitBeaconCommitteeSubscriptions provides a mock function with given fields: ctx, subscriptions
 func (_m *Client) SubmitBeaconCommitteeSubscriptions(ctx context.Context, subscriptions []*v1.BeaconCommitteeSubscription) error {
 	ret := _m.Called(ctx, subscriptions)
@@ -510,16 +502,34 @@ func (_m *Client) SubmitBeaconCommitteeSubscriptions(ctx context.Context, subscr
 	return r0
 }
 
-// SubmitBlindedBeaconBlock provides a mock function with given fields: ctx, block
-func (_m *Client) SubmitBlindedBeaconBlock(ctx context.Context, block *api.VersionedSignedBlindedBeaconBlock) error {
+// SubmitBlindedProposal provides a mock function with given fields: ctx, block
+func (_m *Client) SubmitBlindedProposal(ctx context.Context, block *api.VersionedSignedBlindedProposal) error {
 	ret := _m.Called(ctx, block)
 
 	if len(ret) == 0 {
-		panic("no return value specified for SubmitBlindedBeaconBlock")
+		panic("no return value specified for SubmitBlindedProposal")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, *api.VersionedSignedBlindedBeaconBlock) error); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *api.VersionedSignedBlindedProposal) error); ok {
+		r0 = rf(ctx, block)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// SubmitProposal provides a mock function with given fields: ctx, block
+func (_m *Client) SubmitProposal(ctx context.Context, block *api.VersionedSignedProposal) error {
+	ret := _m.Called(ctx, block)
+
+	if len(ret) == 0 {
+		panic("no return value specified for SubmitProposal")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, *api.VersionedSignedProposal) error); ok {
 		r0 = rf(ctx, block)
 	} else {
 		r0 = ret.Error(0)
@@ -618,29 +628,29 @@ func (_m *Client) SubmitValidatorRegistrations(ctx context.Context, registration
 	return r0
 }
 
-// SyncCommitteeContribution provides a mock function with given fields: ctx, slot, subcommitteeIndex, beaconBlockRoot
-func (_m *Client) SyncCommitteeContribution(ctx context.Context, slot phase0.Slot, subcommitteeIndex uint64, beaconBlockRoot phase0.Root) (*altair.SyncCommitteeContribution, error) {
-	ret := _m.Called(ctx, slot, subcommitteeIndex, beaconBlockRoot)
+// SyncCommitteeContribution provides a mock function with given fields: ctx, opts
+func (_m *Client) SyncCommitteeContribution(ctx context.Context, opts *api.SyncCommitteeContributionOpts) (*api.Response[*altair.SyncCommitteeContribution], error) {
+	ret := _m.Called(ctx, opts)
 
 	if len(ret) == 0 {
 		panic("no return value specified for SyncCommitteeContribution")
 	}
 
-	var r0 *altair.SyncCommitteeContribution
+	var r0 *api.Response[*altair.SyncCommitteeContribution]
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, phase0.Slot, uint64, phase0.Root) (*altair.SyncCommitteeContribution, error)); ok {
-		return rf(ctx, slot, subcommitteeIndex, beaconBlockRoot)
+	if rf, ok := ret.Get(0).(func(context.Context, *api.SyncCommitteeContributionOpts) (*api.Response[*altair.SyncCommitteeContribution], error)); ok {
+		return rf(ctx, opts)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, phase0.Slot, uint64, phase0.Root) *altair.SyncCommitteeContribution); ok {
-		r0 = rf(ctx, slot, subcommitteeIndex, beaconBlockRoot)
+	if rf, ok := ret.Get(0).(func(context.Context, *api.SyncCommitteeContributionOpts) *api.Response[*altair.SyncCommitteeContribution]); ok {
+		r0 = rf(ctx, opts)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*altair.SyncCommitteeContribution)
+			r0 = ret.Get(0).(*api.Response[*altair.SyncCommitteeContribution])
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, phase0.Slot, uint64, phase0.Root) error); ok {
-		r1 = rf(ctx, slot, subcommitteeIndex, beaconBlockRoot)
+	if rf, ok := ret.Get(1).(func(context.Context, *api.SyncCommitteeContributionOpts) error); ok {
+		r1 = rf(ctx, opts)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -648,29 +658,29 @@ func (_m *Client) SyncCommitteeContribution(ctx context.Context, slot phase0.Slo
 	return r0, r1
 }
 
-// SyncCommitteeDuties provides a mock function with given fields: ctx, epoch, indices
-func (_m *Client) SyncCommitteeDuties(ctx context.Context, epoch phase0.Epoch, indices []phase0.ValidatorIndex) ([]*v1.SyncCommitteeDuty, error) {
-	ret := _m.Called(ctx, epoch, indices)
+// SyncCommitteeDuties provides a mock function with given fields: ctx, opts
+func (_m *Client) SyncCommitteeDuties(ctx context.Context, opts *api.SyncCommitteeDutiesOpts) (*api.Response[[]*v1.SyncCommitteeDuty], error) {
+	ret := _m.Called(ctx, opts)
 
 	if len(ret) == 0 {
 		panic("no return value specified for SyncCommitteeDuties")
 	}
 
-	var r0 []*v1.SyncCommitteeDuty
+	var r0 *api.Response[[]*v1.SyncCommitteeDuty]
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, phase0.Epoch, []phase0.ValidatorIndex) ([]*v1.SyncCommitteeDuty, error)); ok {
-		return rf(ctx, epoch, indices)
+	if rf, ok := ret.Get(0).(func(context.Context, *api.SyncCommitteeDutiesOpts) (*api.Response[[]*v1.SyncCommitteeDuty], error)); ok {
+		return rf(ctx, opts)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, phase0.Epoch, []phase0.ValidatorIndex) []*v1.SyncCommitteeDuty); ok {
-		r0 = rf(ctx, epoch, indices)
+	if rf, ok := ret.Get(0).(func(context.Context, *api.SyncCommitteeDutiesOpts) *api.Response[[]*v1.SyncCommitteeDuty]); ok {
+		r0 = rf(ctx, opts)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]*v1.SyncCommitteeDuty)
+			r0 = ret.Get(0).(*api.Response[[]*v1.SyncCommitteeDuty])
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, phase0.Epoch, []phase0.ValidatorIndex) error); ok {
-		r1 = rf(ctx, epoch, indices)
+	if rf, ok := ret.Get(1).(func(context.Context, *api.SyncCommitteeDutiesOpts) error); ok {
+		r1 = rf(ctx, opts)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -678,59 +688,29 @@ func (_m *Client) SyncCommitteeDuties(ctx context.Context, epoch phase0.Epoch, i
 	return r0, r1
 }
 
-// Validators provides a mock function with given fields: ctx, stateID, indices
-func (_m *Client) Validators(ctx context.Context, stateID string, indices []phase0.ValidatorIndex) (map[phase0.ValidatorIndex]*v1.Validator, error) {
-	ret := _m.Called(ctx, stateID, indices)
+// Validators provides a mock function with given fields: ctx, opts
+func (_m *Client) Validators(ctx context.Context, opts *api.ValidatorsOpts) (*api.Response[map[phase0.ValidatorIndex]*v1.Validator], error) {
+	ret := _m.Called(ctx, opts)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Validators")
 	}
 
-	var r0 map[phase0.ValidatorIndex]*v1.Validator
+	var r0 *api.Response[map[phase0.ValidatorIndex]*v1.Validator]
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, string, []phase0.ValidatorIndex) (map[phase0.ValidatorIndex]*v1.Validator, error)); ok {
-		return rf(ctx, stateID, indices)
+	if rf, ok := ret.Get(0).(func(context.Context, *api.ValidatorsOpts) (*api.Response[map[phase0.ValidatorIndex]*v1.Validator], error)); ok {
+		return rf(ctx, opts)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, string, []phase0.ValidatorIndex) map[phase0.ValidatorIndex]*v1.Validator); ok {
-		r0 = rf(ctx, stateID, indices)
+	if rf, ok := ret.Get(0).(func(context.Context, *api.ValidatorsOpts) *api.Response[map[phase0.ValidatorIndex]*v1.Validator]); ok {
+		r0 = rf(ctx, opts)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(map[phase0.ValidatorIndex]*v1.Validator)
+			r0 = ret.Get(0).(*api.Response[map[phase0.ValidatorIndex]*v1.Validator])
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, string, []phase0.ValidatorIndex) error); ok {
-		r1 = rf(ctx, stateID, indices)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
-// ValidatorsByPubKey provides a mock function with given fields: ctx, stateID, validatorPubKeys
-func (_m *Client) ValidatorsByPubKey(ctx context.Context, stateID string, validatorPubKeys []phase0.BLSPubKey) (map[phase0.ValidatorIndex]*v1.Validator, error) {
-	ret := _m.Called(ctx, stateID, validatorPubKeys)
-
-	if len(ret) == 0 {
-		panic("no return value specified for ValidatorsByPubKey")
-	}
-
-	var r0 map[phase0.ValidatorIndex]*v1.Validator
-	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, string, []phase0.BLSPubKey) (map[phase0.ValidatorIndex]*v1.Validator, error)); ok {
-		return rf(ctx, stateID, validatorPubKeys)
-	}
-	if rf, ok := ret.Get(0).(func(context.Context, string, []phase0.BLSPubKey) map[phase0.ValidatorIndex]*v1.Validator); ok {
-		r0 = rf(ctx, stateID, validatorPubKeys)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(map[phase0.ValidatorIndex]*v1.Validator)
-		}
-	}
-
-	if rf, ok := ret.Get(1).(func(context.Context, string, []phase0.BLSPubKey) error); ok {
-		r1 = rf(ctx, stateID, validatorPubKeys)
+	if rf, ok := ret.Get(1).(func(context.Context, *api.ValidatorsOpts) error); ok {
+		r1 = rf(ctx, opts)
 	} else {
 		r1 = ret.Error(1)
 	}
