@@ -9,8 +9,8 @@ package pool
 import (
 	"context"
 	"sync"
-	"time"
 
+	eth2client "github.com/attestantio/go-eth2-client"
 	"github.com/attestantio/go-eth2-client/api"
 	apiv1 "github.com/attestantio/go-eth2-client/api/v1"
 	"github.com/attestantio/go-eth2-client/spec"
@@ -82,7 +82,7 @@ func (m *methods) AttestationData(ctx context.Context, slot phase0.Slot, committ
 	return _result.ap1, _result.err
 }
 
-func (m *methods) AttesterDuties(ctx context.Context, epoch phase0.Epoch, validatorIndices []phase0.ValidatorIndex) (apa1 []*apiv1.AttesterDuty, err error) {
+func (m *methods) AttesterDuties(ctx context.Context, epoch phase0.Epoch, indices []phase0.ValidatorIndex) (apa1 []*apiv1.AttesterDuty, err error) {
 	ctx = context.WithValue(ctx, methodCtxKey{}, "AttesterDuties")
 	type _resultStruct struct {
 		apa1 []*apiv1.AttesterDuty
@@ -91,7 +91,7 @@ func (m *methods) AttesterDuties(ctx context.Context, epoch phase0.Epoch, valida
 	var _result, _unchecked _resultStruct
 	var _mutex sync.Mutex
 	_result.err = m.callFunc(ctx, func(ctx context.Context, client beacon.Client) error {
-		apa1, err := client.AttesterDuties(ctx, epoch, validatorIndices)
+		apa1, err := client.AttesterDuties(ctx, epoch, indices)
 		_mutex.Lock()
 		defer _mutex.Unlock()
 		_unchecked = _resultStruct{apa1, err}
@@ -126,28 +126,6 @@ func (m *methods) BeaconBlockHeader(ctx context.Context, blockID string) (bp1 *a
 	return _result.bp1, _result.err
 }
 
-func (m *methods) BeaconBlockProposal(ctx context.Context, slot phase0.Slot, randaoReveal phase0.BLSSignature, graffiti []byte) (vp1 *spec.VersionedBeaconBlock, err error) {
-	ctx = context.WithValue(ctx, methodCtxKey{}, "BeaconBlockProposal")
-	type _resultStruct struct {
-		vp1 *spec.VersionedBeaconBlock
-		err error
-	}
-	var _result, _unchecked _resultStruct
-	var _mutex sync.Mutex
-	_result.err = m.callFunc(ctx, func(ctx context.Context, client beacon.Client) error {
-		vp1, err := client.BeaconBlockProposal(ctx, slot, randaoReveal, graffiti)
-		_mutex.Lock()
-		defer _mutex.Unlock()
-		_unchecked = _resultStruct{vp1, err}
-		if err != nil {
-			return err
-		}
-		_result = _unchecked
-		return nil
-	})
-	return _result.vp1, _result.err
-}
-
 func (m *methods) BeaconBlockRoot(ctx context.Context, blockID string) (rp1 *phase0.Root, err error) {
 	ctx = context.WithValue(ctx, methodCtxKey{}, "BeaconBlockRoot")
 	type _resultStruct struct {
@@ -170,16 +148,16 @@ func (m *methods) BeaconBlockRoot(ctx context.Context, blockID string) (rp1 *pha
 	return _result.rp1, _result.err
 }
 
-func (m *methods) BlindedBeaconBlockProposal(ctx context.Context, slot phase0.Slot, randaoReveal phase0.BLSSignature, graffiti []byte) (vp1 *api.VersionedBlindedBeaconBlock, err error) {
-	ctx = context.WithValue(ctx, methodCtxKey{}, "BlindedBeaconBlockProposal")
+func (m *methods) BlindedProposal(ctx context.Context, slot phase0.Slot, randaoReveal phase0.BLSSignature, graffiti [32]byte) (vp1 *api.VersionedBlindedProposal, err error) {
+	ctx = context.WithValue(ctx, methodCtxKey{}, "BlindedProposal")
 	type _resultStruct struct {
-		vp1 *api.VersionedBlindedBeaconBlock
+		vp1 *api.VersionedBlindedProposal
 		err error
 	}
 	var _result, _unchecked _resultStruct
 	var _mutex sync.Mutex
 	_result.err = m.callFunc(ctx, func(ctx context.Context, client beacon.Client) error {
-		vp1, err := client.BlindedBeaconBlockProposal(ctx, slot, randaoReveal, graffiti)
+		vp1, err := client.BlindedProposal(ctx, slot, randaoReveal, graffiti)
 		_mutex.Lock()
 		defer _mutex.Unlock()
 		_unchecked = _resultStruct{vp1, err}
@@ -214,33 +192,76 @@ func (m *methods) Domain(ctx context.Context, domainType phase0.DomainType, epoc
 	return _result.d1, _result.err
 }
 
-func (m *methods) GenesisTime(ctx context.Context) (t1 time.Time, err error) {
-	ctx = context.WithValue(ctx, methodCtxKey{}, "GenesisTime")
+func (m *methods) Events(ctx context.Context, topics []string, handler eth2client.EventHandlerFunc) (err error) {
+	ctx = context.WithValue(ctx, methodCtxKey{}, "Events")
 	type _resultStruct struct {
-		t1  time.Time
 		err error
 	}
 	var _result, _unchecked _resultStruct
 	var _mutex sync.Mutex
 	_result.err = m.callFunc(ctx, func(ctx context.Context, client beacon.Client) error {
-		t1, err := client.GenesisTime(ctx)
+		err := client.Events(ctx, topics, handler)
 		_mutex.Lock()
 		defer _mutex.Unlock()
-		_unchecked = _resultStruct{t1, err}
+		_unchecked = _resultStruct{err}
 		if err != nil {
 			return err
 		}
 		_result = _unchecked
 		return nil
 	})
-	return _result.t1, _result.err
+	return _result.err
+}
+
+func (m *methods) Genesis(ctx context.Context) (gp1 *apiv1.Genesis, err error) {
+	ctx = context.WithValue(ctx, methodCtxKey{}, "Genesis")
+	type _resultStruct struct {
+		gp1 *apiv1.Genesis
+		err error
+	}
+	var _result, _unchecked _resultStruct
+	var _mutex sync.Mutex
+	_result.err = m.callFunc(ctx, func(ctx context.Context, client beacon.Client) error {
+		gp1, err := client.Genesis(ctx)
+		_mutex.Lock()
+		defer _mutex.Unlock()
+		_unchecked = _resultStruct{gp1, err}
+		if err != nil {
+			return err
+		}
+		_result = _unchecked
+		return nil
+	})
+	return _result.gp1, _result.err
 }
 
 func (m *methods) Name() (s1 string) {
 	return m.defaultClient().Name()
 }
 
-func (m *methods) ProposerDuties(ctx context.Context, epoch phase0.Epoch, validatorIndices []phase0.ValidatorIndex) (ppa1 []*apiv1.ProposerDuty, err error) {
+func (m *methods) Proposal(ctx context.Context, slot phase0.Slot, randaoReveal phase0.BLSSignature, graffiti [32]byte) (vp1 *api.VersionedProposal, err error) {
+	ctx = context.WithValue(ctx, methodCtxKey{}, "Proposal")
+	type _resultStruct struct {
+		vp1 *api.VersionedProposal
+		err error
+	}
+	var _result, _unchecked _resultStruct
+	var _mutex sync.Mutex
+	_result.err = m.callFunc(ctx, func(ctx context.Context, client beacon.Client) error {
+		vp1, err := client.Proposal(ctx, slot, randaoReveal, graffiti)
+		_mutex.Lock()
+		defer _mutex.Unlock()
+		_unchecked = _resultStruct{vp1, err}
+		if err != nil {
+			return err
+		}
+		_result = _unchecked
+		return nil
+	})
+	return _result.vp1, _result.err
+}
+
+func (m *methods) ProposerDuties(ctx context.Context, epoch phase0.Epoch, indices []phase0.ValidatorIndex) (ppa1 []*apiv1.ProposerDuty, err error) {
 	ctx = context.WithValue(ctx, methodCtxKey{}, "ProposerDuties")
 	type _resultStruct struct {
 		ppa1 []*apiv1.ProposerDuty
@@ -249,7 +270,7 @@ func (m *methods) ProposerDuties(ctx context.Context, epoch phase0.Epoch, valida
 	var _result, _unchecked _resultStruct
 	var _mutex sync.Mutex
 	_result.err = m.callFunc(ctx, func(ctx context.Context, client beacon.Client) error {
-		ppa1, err := client.ProposerDuties(ctx, epoch, validatorIndices)
+		ppa1, err := client.ProposerDuties(ctx, epoch, indices)
 		_mutex.Lock()
 		defer _mutex.Unlock()
 		_unchecked = _resultStruct{ppa1, err}
@@ -538,7 +559,7 @@ func (m *methods) SyncCommitteeContribution(ctx context.Context, slot phase0.Slo
 	return _result.sp1, _result.err
 }
 
-func (m *methods) SyncCommitteeDuties(ctx context.Context, epoch phase0.Epoch, validatorIndices []phase0.ValidatorIndex) (spa1 []*apiv1.SyncCommitteeDuty, err error) {
+func (m *methods) SyncCommitteeDuties(ctx context.Context, epoch phase0.Epoch, indices []phase0.ValidatorIndex) (spa1 []*apiv1.SyncCommitteeDuty, err error) {
 	ctx = context.WithValue(ctx, methodCtxKey{}, "SyncCommitteeDuties")
 	type _resultStruct struct {
 		spa1 []*apiv1.SyncCommitteeDuty
@@ -547,7 +568,7 @@ func (m *methods) SyncCommitteeDuties(ctx context.Context, epoch phase0.Epoch, v
 	var _result, _unchecked _resultStruct
 	var _mutex sync.Mutex
 	_result.err = m.callFunc(ctx, func(ctx context.Context, client beacon.Client) error {
-		spa1, err := client.SyncCommitteeDuties(ctx, epoch, validatorIndices)
+		spa1, err := client.SyncCommitteeDuties(ctx, epoch, indices)
 		_mutex.Lock()
 		defer _mutex.Unlock()
 		_unchecked = _resultStruct{spa1, err}
@@ -560,7 +581,7 @@ func (m *methods) SyncCommitteeDuties(ctx context.Context, epoch phase0.Epoch, v
 	return _result.spa1, _result.err
 }
 
-func (m *methods) Validators(ctx context.Context, stateID string, validatorIndices []phase0.ValidatorIndex) (m1 map[phase0.ValidatorIndex]*apiv1.Validator, err error) {
+func (m *methods) Validators(ctx context.Context, stateID string, indices []phase0.ValidatorIndex) (m1 map[phase0.ValidatorIndex]*apiv1.Validator, err error) {
 	ctx = context.WithValue(ctx, methodCtxKey{}, "Validators")
 	type _resultStruct struct {
 		m1  map[phase0.ValidatorIndex]*apiv1.Validator
@@ -569,7 +590,7 @@ func (m *methods) Validators(ctx context.Context, stateID string, validatorIndic
 	var _result, _unchecked _resultStruct
 	var _mutex sync.Mutex
 	_result.err = m.callFunc(ctx, func(ctx context.Context, client beacon.Client) error {
-		m1, err := client.Validators(ctx, stateID, validatorIndices)
+		m1, err := client.Validators(ctx, stateID, indices)
 		_mutex.Lock()
 		defer _mutex.Unlock()
 		_unchecked = _resultStruct{m1, err}
