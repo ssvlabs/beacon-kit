@@ -89,9 +89,15 @@ func (c *Client) SignedBeaconBlock(ctx context.Context, opts *api.SignedBeaconBl
 	if !ok {
 		return nil, ErrCallNotSupported
 	}
-	var block *spec.VersionedSignedBeaconBlock
-	response, err := provider.SignedBeaconBlock(ctx, opts)
+	resp, err := provider.SignedBeaconBlock(ctx, opts)
 	if err != nil {
+		var apiErr *api.Error
+		if errors.As(err, &apiErr) {
+			if apiErr.StatusCode == 404 {
+				return nil, beacon.ErrBlockNotFound
+			}
+		}
+
 		// Hack to gracefully handle missing blocks from Prysm.
 		notFound := false
 		errString := err.Error()
@@ -107,13 +113,14 @@ func (c *Client) SignedBeaconBlock(ctx context.Context, opts *api.SignedBeaconBl
 		if !notFound {
 			return nil, err
 		}
-	} else {
-		block = response.Data
 	}
-	if block == nil {
+	if resp == nil {
+		return nil, ErrEmptyResponse
+	}
+	if resp.Data == nil {
 		return nil, beacon.ErrBlockNotFound
 	}
-	return response, nil
+	return resp, nil
 }
 
 func (c *Client) BeaconBlockHeader(ctx context.Context, opts *api.BeaconBlockHeaderOpts) (*api.Response[*apiv1.BeaconBlockHeader], error) {
