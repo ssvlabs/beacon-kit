@@ -1,5 +1,5 @@
-github.com/attestantio/go-eth2-client v0.19.8 h1:7hn5X1MohW+wpfnwOpysPpjSktZwTB0A2ClohOCgZLI=
-github.com/attestantio/go-eth2-client v0.19.8/go.mod h1:mZve1kV9Ctj0I1HH9gdg+MnI8lZ+Cb2EktEtOYrBlsM=
+github.com/attestantio/go-eth2-client v0.19.9 h1:g5LLX3X7cLC0KS0oai/MtxBOZz3U3QPIX5qryYMxgVE=
+github.com/attestantio/go-eth2-client v0.19.9/go.mod h1:TTz7YF6w4z6ahvxKiHuGPn6DbQn7gH6HPuWm/DEQeGE=
 github.com/benbjohnson/clock v1.1.0 h1:Q92kusRqC1XV2MjkWETPvjJVqKetz1OzxZB7mHJLju8=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
