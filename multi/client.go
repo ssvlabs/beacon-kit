@@ -7,7 +7,8 @@ import (
 	"sync"
 	"time"
 
-	api "github.com/attestantio/go-eth2-client/api/v1"
+	"github.com/attestantio/go-eth2-client/api"
+	apiv1 "github.com/attestantio/go-eth2-client/api/v1"
 	"github.com/attestantio/go-eth2-client/spec/phase0"
 	"github.com/bloxapp/beacon-kit"
 	"github.com/bloxapp/beacon-kit/logging"
@@ -51,12 +52,12 @@ func New(spec *beacon.Spec, poolClient *pool.Client, options Options) *Client {
 func (c *Client) BestAttestationDataSelection(ctx context.Context, earlyTimeout time.Duration) error {
 	c.bestAttestationSelectionTimeout = earlyTimeout
 
-	err := c.EventsWithClient(ctx, []string{"block"}, func(client beacon.Client, e *api.Event) {
+	err := c.EventsWithClient(ctx, []string{"block"}, func(client beacon.Client, e *apiv1.Event) {
 		// log.Printf("GotBlockEventData: %#v", e.Data)
 		if e.Data == nil {
 			return
 		}
-		data := e.Data.(*api.BlockEvent)
+		data := e.Data.(*apiv1.BlockEvent)
 
 		// log.Printf("GotBlockEvent root %#x for slot %d from %s", data.Block, data.Slot, client.Address())
 		c.blockRootSlots.Set(data.Block, data.Slot)
@@ -106,19 +107,19 @@ func (c *Client) AttestationData(ctx context.Context, slot phase0.Slot, committe
 
 	err := c.With(pool.FirstSuccess(false)).
 		Call(ctx, func(ctx context.Context, client beacon.Client) error {
-			data, err := client.AttestationData(ctx, slot, committeeIndex)
+			resp, err := client.AttestationData(ctx, &api.AttestationDataOpts{Slot: slot, CommitteeIndex: committeeIndex})
 			if err != nil {
 				return err
 			}
-			if data == nil {
+			if resp == nil {
 				return nil
 			}
 
-			dataSlot, _ := c.blockRootSlots.Get(data.BeaconBlockRoot)
+			dataSlot, _ := c.blockRootSlots.Get(resp.Data.BeaconBlockRoot)
 
 			logging.FromContext(ctx).Debug("Scoring AttestationData",
 				zap.String("client", client.Address()),
-				zap.String("block_root", fmt.Sprintf("%#x", data.BeaconBlockRoot)),
+				zap.String("block_root", fmt.Sprintf("%#x", resp.Data.BeaconBlockRoot)),
 				zap.Uint64("derived_slot", uint64(dataSlot)))
 
 			func() {
@@ -147,11 +148,11 @@ func (c *Client) AttestationData(ctx context.Context, slot phase0.Slot, committe
 							zap.String("block_root", fmt.Sprintf("%#x", bestData.BeaconBlockRoot)),
 							zap.Uint64("slot", uint64(bestDataSlot)),
 							zap.String("better_client", client.Address()),
-							zap.String("better_block_root", fmt.Sprintf("%#x", data.BeaconBlockRoot)),
+							zap.String("better_block_root", fmt.Sprintf("%#x", resp.Data.BeaconBlockRoot)),
 							zap.Uint64("better_slot", uint64(dataSlot)))
 					}
 
-					bestData = data
+					bestData = resp.Data
 					bestDataSlot = dataSlot
 					bestDataClient = client.Address()
 
@@ -173,7 +174,7 @@ func (c *Client) AttestationData(ctx context.Context, slot phase0.Slot, committe
 	return nil, err
 }
 
-func (c *Client) SubmitBeaconCommitteeSubscriptions(ctx context.Context, subscriptions []*api.BeaconCommitteeSubscription) error {
+func (c *Client) SubmitBeaconCommitteeSubscriptions(ctx context.Context, subscriptions []*apiv1.BeaconCommitteeSubscription) error {
 	return c.submitter().SubmitBeaconCommitteeSubscriptions(ctx, subscriptions)
 }
 
@@ -185,7 +186,7 @@ func (c *Client) SubmitAggregateAttestations(ctx context.Context, aggregateAndPr
 	return c.submitter().SubmitAggregateAttestations(ctx, aggregateAndProofs)
 }
 
-func (c *Client) SubmitSyncCommitteeSubscriptions(ctx context.Context, subscriptions []*api.SyncCommitteeSubscription) error {
+func (c *Client) SubmitSyncCommitteeSubscriptions(ctx context.Context, subscriptions []*apiv1.SyncCommitteeSubscription) error {
 	return c.submitter().SubmitSyncCommitteeSubscriptions(ctx, subscriptions)
 }
 

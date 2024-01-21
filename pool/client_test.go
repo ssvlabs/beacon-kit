@@ -8,7 +8,8 @@ import (
 	"testing"
 	"time"
 
-	api "github.com/attestantio/go-eth2-client/api/v1"
+	"github.com/attestantio/go-eth2-client/api"
+	apiv1 "github.com/attestantio/go-eth2-client/api/v1"
 	"github.com/attestantio/go-eth2-client/spec/phase0"
 	"github.com/bloxapp/beacon-kit"
 	"github.com/bloxapp/beacon-kit/mocks"
@@ -43,22 +44,22 @@ func TestPoolWithoutFirstSuccess(t *testing.T) {
 	require.Equal(t, pool.NumClients, pool.Size(), "pool size should equal the number of clients")
 
 	// Test that a call is received by all clients.
-	poolResp, err := pool.BeaconBlockHeader(ctx, "32")
+	poolResp, err := pool.BeaconBlockHeader(ctx, &api.BeaconBlockHeaderOpts{Block: "32"})
 	require.NoError(t, err)
 
 	for _, client := range pool.Mocks {
-		client.AssertCalled(t, "BeaconBlockHeader", mock.Anything, "32")
+		client.AssertCalled(t, "BeaconBlockHeader", mock.Anything, mock.AnythingOfType("*api.BeaconBlockHeaderOpts"))
 	}
 
 	// Test that the pool returns the same data as the clients.
-	clientResp, err := pool.Mocks[0].BeaconBlockHeader(ctx, "32")
+	clientResp, err := pool.Mocks[0].BeaconBlockHeader(ctx, &api.BeaconBlockHeaderOpts{Block: "32"})
 	require.NoError(t, err)
 	require.Equal(t, clientResp, poolResp, "pool should return the same data as the client")
 
 	// Test that a call returns an error if all clients fail.
 	knobs.ErrorRate = 1
 	pool = CreateTestPool(t, knobs, options...)
-	_, err = pool.BeaconBlockHeader(ctx, "32")
+	_, err = pool.BeaconBlockHeader(ctx, &api.BeaconBlockHeaderOpts{Block: "32"})
 	errStruct, ok := err.(*Error)
 	require.True(t, ok, "error should be a CallTrace")
 	require.Len(
@@ -84,10 +85,10 @@ func TestPoolFaultTolerance(t *testing.T) {
 	require.Equal(t, pool.NumClients, pool.Size(), "pool size should be equal to number of clients")
 
 	// Test that the pool returns the same data as the clients.
-	poolBlock, err := pool.BeaconBlockHeader(ctx, "32")
+	poolBlock, err := pool.BeaconBlockHeader(ctx, &api.BeaconBlockHeaderOpts{Block: "32"})
 	require.NoError(t, err)
 
-	clientBlock, err := CreateTestClient(0, 0, 0).BeaconBlockHeader(ctx, "32")
+	clientBlock, err := CreateTestClient(0, 0, 0).BeaconBlockHeader(ctx, &api.BeaconBlockHeaderOpts{Block: "32"})
 	require.NoError(t, err)
 	require.Equal(t, clientBlock, poolBlock, "pool should return the same data as the client")
 }
@@ -135,14 +136,14 @@ func CreateTestPool(t *testing.T, knobs TestPoolKnobs, options ...interface{}) *
 func CreateTestClient(minSleep, maxSleep time.Duration, errorRate float64) *mocks.Client {
 	client := &mocks.Client{}
 	client.On("Address").Maybe().Return("http://mock")
-	client.On("BeaconBlockHeader", mock.Anything, mock.AnythingOfType("string")).
+	client.On("BeaconBlockHeader", mock.Anything, mock.AnythingOfType("*api.BeaconBlockHeaderOpts")).
 		Maybe().
-		Return(func(ctx context.Context, blockRoot string) *api.BeaconBlockHeader {
+		Return(func(ctx context.Context, opts *api.BeaconBlockHeaderOpts) *api.Response[*apiv1.BeaconBlockHeader] {
 			if maxSleep > 0 {
 				time.Sleep(minSleep + time.Duration(rand.Intn(int(maxSleep-minSleep+1))))
 			}
-			return &api.BeaconBlockHeader{Root: phase0.Root{}}
-		}, func(ctx context.Context, blockRoot string) error {
+			return &api.Response[*apiv1.BeaconBlockHeader]{Data: &apiv1.BeaconBlockHeader{Root: phase0.Root{}}}
+		}, func(ctx context.Context, opts *api.BeaconBlockHeaderOpts) error {
 			if rand.Float64() <= errorRate {
 				return fmt.Errorf("error")
 			}
