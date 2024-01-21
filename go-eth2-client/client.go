@@ -48,25 +48,11 @@ func (c *Client) Address() string {
 }
 
 func (c *Client) Spec(ctx context.Context, opts *api.SpecOpts) (*api.Response[map[string]interface{}], error) {
-	resp, err := c.service.(eth2client.SpecProvider).Spec(ctx, opts)
-	if err != nil {
-		return nil, err
-	}
-	if resp == nil {
-		return nil, ErrEmptyResponse
-	}
-	return resp, nil
+	return checkResponse(c.service.(eth2client.SpecProvider).Spec(ctx, opts))
 }
 
 func (c *Client) Genesis(ctx context.Context, opts *api.GenesisOpts) (*api.Response[*apiv1.Genesis], error) {
-	resp, err := c.service.(eth2client.GenesisProvider).Genesis(ctx, opts)
-	if err != nil {
-		return nil, err
-	}
-	if resp == nil {
-		return nil, ErrEmptyResponse
-	}
-	return resp, nil
+	return checkResponse(c.service.(eth2client.GenesisProvider).Genesis(ctx, opts))
 }
 
 func (c *Client) BeaconBlockRoot(ctx context.Context, opts *api.BeaconBlockRootOpts) (*api.Response[*phase0.Root], error) {
@@ -74,14 +60,7 @@ func (c *Client) BeaconBlockRoot(ctx context.Context, opts *api.BeaconBlockRootO
 	if !ok {
 		return nil, ErrCallNotSupported
 	}
-	resp, err := provider.BeaconBlockRoot(ctx, opts)
-	if err != nil {
-		return nil, err
-	}
-	if resp == nil {
-		return nil, ErrEmptyResponse
-	}
-	return resp, nil
+	return checkResponse(provider.BeaconBlockRoot(ctx, opts))
 }
 
 func (c *Client) SignedBeaconBlock(ctx context.Context, opts *api.SignedBeaconBlockOpts) (*api.Response[*spec.VersionedSignedBeaconBlock], error) {
@@ -128,14 +107,7 @@ func (c *Client) BeaconBlockHeader(ctx context.Context, opts *api.BeaconBlockHea
 	if !ok {
 		return nil, ErrCallNotSupported
 	}
-	resp, err := provider.BeaconBlockHeader(ctx, opts)
-	if err != nil {
-		return nil, err
-	}
-	if resp == nil {
-		return nil, ErrEmptyResponse
-	}
-	return resp, nil
+	return checkResponse(provider.BeaconBlockHeader(ctx, opts))
 }
 
 func (c *Client) ProposerDuties(ctx context.Context, opts *api.ProposerDutiesOpts) (*api.Response[[]*apiv1.ProposerDuty], error) {
@@ -143,14 +115,7 @@ func (c *Client) ProposerDuties(ctx context.Context, opts *api.ProposerDutiesOpt
 	if !ok {
 		return nil, ErrCallNotSupported
 	}
-	resp, err := provider.ProposerDuties(ctx, opts)
-	if err != nil {
-		return nil, err
-	}
-	if resp == nil {
-		return nil, ErrEmptyResponse
-	}
-	return resp, nil
+	return checkResponse(provider.ProposerDuties(ctx, opts))
 }
 
 func (c *Client) AttesterDuties(ctx context.Context, opts *api.AttesterDutiesOpts) (*api.Response[[]*apiv1.AttesterDuty], error) {
@@ -158,14 +123,7 @@ func (c *Client) AttesterDuties(ctx context.Context, opts *api.AttesterDutiesOpt
 	if !ok {
 		return nil, ErrCallNotSupported
 	}
-	resp, err := provider.AttesterDuties(ctx, opts)
-	if err != nil {
-		return nil, err
-	}
-	if resp == nil {
-		return nil, ErrEmptyResponse
-	}
-	return resp, nil
+	return checkResponse(provider.AttesterDuties(ctx, opts))
 }
 
 func (c *Client) SyncCommitteeDuties(ctx context.Context, opts *api.SyncCommitteeDutiesOpts) (*api.Response[[]*apiv1.SyncCommitteeDuty], error) {
@@ -173,14 +131,7 @@ func (c *Client) SyncCommitteeDuties(ctx context.Context, opts *api.SyncCommitte
 	if !ok {
 		return nil, ErrCallNotSupported
 	}
-	resp, err := provider.SyncCommitteeDuties(ctx, opts)
-	if err != nil {
-		return nil, err
-	}
-	if resp == nil {
-		return nil, ErrEmptyResponse
-	}
-	return resp, nil
+	return checkResponse(provider.SyncCommitteeDuties(ctx, opts))
 }
 
 func (c *Client) Domain(ctx context.Context, domainType phase0.DomainType, epoch phase0.Epoch) (phase0.Domain, error) {
@@ -204,14 +155,7 @@ func (c *Client) Validators(ctx context.Context, opts *api.ValidatorsOpts) (*api
 	if !ok {
 		return nil, ErrCallNotSupported
 	}
-	resp, err := provider.Validators(ctx, opts)
-	if err != nil {
-		return nil, err
-	}
-	if resp == nil {
-		return nil, ErrEmptyResponse
-	}
-	return resp, nil
+	return checkResponse(provider.Validators(ctx, opts))
 }
 
 func (c *Client) SubmitProposalPreparations(ctx context.Context, preparations []*apiv1.ProposalPreparation) error {
@@ -235,14 +179,7 @@ func (c *Client) Proposal(ctx context.Context, opts *api.ProposalOpts) (*api.Res
 	if !ok {
 		return nil, ErrCallNotSupported
 	}
-	resp, err := provider.Proposal(ctx, opts)
-	if err != nil {
-		return nil, err
-	}
-	if resp == nil {
-		return nil, ErrEmptyResponse
-	}
-	return resp, nil
+	return checkResponse(provider.Proposal(ctx, opts))
 }
 
 func (c *Client) SubmitProposal(ctx context.Context, proposal *api.VersionedSignedProposal) error {
@@ -258,14 +195,7 @@ func (c *Client) BlindedProposal(ctx context.Context, opts *api.BlindedProposalO
 	if !ok {
 		return nil, ErrCallNotSupported
 	}
-	resp, err := provider.BlindedProposal(ctx, opts)
-	if err != nil {
-		return nil, err
-	}
-	if resp == nil {
-		return nil, ErrEmptyResponse
-	}
-	return resp, nil
+	return checkResponse(provider.BlindedProposal(ctx, opts))
 }
 
 // SubmitBlindedBeaconBlock provides a mock function with given fields: ctx, block
@@ -290,14 +220,7 @@ func (c *Client) AttestationData(ctx context.Context, opts *api.AttestationDataO
 	if !ok {
 		return nil, ErrCallNotSupported
 	}
-	resp, err := provider.AttestationData(ctx, opts)
-	if err != nil {
-		return nil, err
-	}
-	if resp == nil {
-		return nil, ErrEmptyResponse
-	}
-	return resp, nil
+	return checkResponse(provider.AttestationData(ctx, opts))
 }
 
 func (c *Client) SubmitAttestations(ctx context.Context, attestations []*phase0.Attestation) error {
@@ -313,14 +236,7 @@ func (c *Client) AggregateAttestation(ctx context.Context, opts *api.AggregateAt
 	if !ok {
 		return nil, ErrCallNotSupported
 	}
-	resp, err := provider.AggregateAttestation(ctx, opts)
-	if err != nil {
-		return nil, err
-	}
-	if resp == nil {
-		return nil, ErrEmptyResponse
-	}
-	return resp, nil
+	return checkResponse(provider.AggregateAttestation(ctx, opts))
 }
 
 func (c *Client) SubmitAggregateAttestations(ctx context.Context, aggregateAndProofs []*phase0.SignedAggregateAndProof) error {
@@ -352,14 +268,7 @@ func (c *Client) SyncCommitteeContribution(ctx context.Context, opts *api.SyncCo
 	if !ok {
 		return nil, ErrCallNotSupported
 	}
-	resp, err := provider.SyncCommitteeContribution(ctx, opts)
-	if err != nil {
-		return nil, err
-	}
-	if resp == nil {
-		return nil, ErrEmptyResponse
-	}
-	return resp, nil
+	return checkResponse(provider.SyncCommitteeContribution(ctx, opts))
 }
 
 func (c *Client) SubmitSyncCommitteeContributions(ctx context.Context, contributionAndProofs []*altair.SignedContributionAndProof) error {
@@ -376,4 +285,14 @@ func (c *Client) Events(ctx context.Context, topics []string, handler eth2client
 		return ErrCallNotSupported
 	}
 	return provider.Events(ctx, topics, handler)
+}
+
+func checkResponse[T any](resp *api.Response[T], err error) (*api.Response[T], error) {
+	if err != nil {
+		return nil, err
+	}
+	if resp == nil {
+		return nil, ErrEmptyResponse
+	}
+	return resp, nil
 }
