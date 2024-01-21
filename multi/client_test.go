@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/attestantio/go-eth2-client/api"
 	"github.com/attestantio/go-eth2-client/spec/phase0"
 	"github.com/bloxapp/beacon-kit"
 	"github.com/bloxapp/beacon-kit/mocks"
@@ -73,7 +74,7 @@ func TestBestAttestationDataSelection(t *testing.T) {
 	// Create an online client (which will return immediately).
 	onlineClient := mocks.NewClient(t)
 	onlineClient.On("Address", mock.Anything).Return("online")
-	onlineClient.On("AttestationData", mock.Anything, mock.Anything, mock.Anything).Return(&phase0.AttestationData{}, nil)
+	onlineClient.On("AttestationData", mock.Anything, mock.Anything, mock.Anything).Return(&api.Response[*phase0.AttestationData]{Data: &phase0.AttestationData{}}, nil)
 
 	// Create a multi.Client with BestAttestationDataSelection.
 	client := New(
