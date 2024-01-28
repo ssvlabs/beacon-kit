@@ -10,10 +10,11 @@ import (
 	"github.com/attestantio/go-eth2-client/api"
 	apiv1 "github.com/attestantio/go-eth2-client/api/v1"
 	"github.com/attestantio/go-eth2-client/spec/phase0"
+	"go.uber.org/zap"
+
 	"github.com/bloxapp/beacon-kit"
 	"github.com/bloxapp/beacon-kit/logging"
 	"github.com/bloxapp/beacon-kit/pool"
-	"go.uber.org/zap"
 )
 
 type CallTrace struct {
@@ -93,7 +94,7 @@ func (c *Client) With(options ...interface{}) *Client {
 	return &copy
 }
 
-func (c *Client) AttestationData(ctx context.Context, slot phase0.Slot, committeeIndex phase0.CommitteeIndex) (*phase0.AttestationData, error) {
+func (c *Client) AttestationData(ctx context.Context, opts *api.AttestationDataOpts) (*api.Response[*phase0.AttestationData], error) {
 	var (
 		bestData       *phase0.AttestationData
 		bestDataSlot   phase0.Slot
@@ -107,7 +108,7 @@ func (c *Client) AttestationData(ctx context.Context, slot phase0.Slot, committe
 
 	err := c.With(pool.FirstSuccess(false)).
 		Call(ctx, func(ctx context.Context, client beacon.Client) error {
-			resp, err := client.AttestationData(ctx, &api.AttestationDataOpts{Slot: slot, CommitteeIndex: committeeIndex})
+			resp, err := client.AttestationData(ctx, opts)
 			if err != nil {
 				return err
 			}
@@ -168,7 +169,7 @@ func (c *Client) AttestationData(ctx context.Context, slot phase0.Slot, committe
 
 	// If at least one of the calls succeeded, return the best AttestationData, ignoring any errors.
 	if bestData != nil {
-		return bestData, nil
+		return &api.Response[*phase0.AttestationData]{Data: bestData}, nil
 	}
 
 	return nil, err
