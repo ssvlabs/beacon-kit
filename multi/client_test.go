@@ -7,11 +7,12 @@ import (
 
 	"github.com/attestantio/go-eth2-client/api"
 	"github.com/attestantio/go-eth2-client/spec/phase0"
+	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
+
 	"github.com/bloxapp/beacon-kit"
 	"github.com/bloxapp/beacon-kit/mocks"
 	"github.com/bloxapp/beacon-kit/pool"
-	"github.com/stretchr/testify/mock"
-	"github.com/stretchr/testify/require"
 )
 
 func TestWith(t *testing.T) {
@@ -87,9 +88,13 @@ func TestBestAttestationDataSelection(t *testing.T) {
 
 	// Check that earlyTimeout is respected.
 	start := time.Now()
-	data, err := client.AttestationData(ctx, 0, 0)
+	dataResp, err := client.AttestationData(ctx, &api.AttestationDataOpts{
+		Slot:           0,
+		CommitteeIndex: 0,
+	})
 	require.NoError(t, err)
-	require.NotNil(t, data)
+	require.NotNil(t, dataResp)
+	require.NotNil(t, dataResp.Data)
 	took := time.Since(start)
 	require.True(t, took >= earlyTimeout, "exited too early!")
 	require.True(t, took < earlyTimeout+(earlyTimeout/2), "exited too late!")

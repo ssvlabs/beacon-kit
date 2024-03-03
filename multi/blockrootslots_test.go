@@ -3,6 +3,7 @@ package multi
 import (
 	"encoding/binary"
 	"math/rand"
+	"sync"
 	"testing"
 
 	"github.com/attestantio/go-eth2-client/spec/phase0"
@@ -18,8 +19,11 @@ func TestBlockRootSlots(t *testing.T) {
 	s := newBlockRootSlots()
 
 	// Concurrent setters.
+	var wg sync.WaitGroup
 	for i := 0; i < 32; i++ {
+		wg.Add(1)
 		go func() {
+			defer wg.Done()
 			for j := 0; j < 1000; j++ {
 				root := roots[rand.Intn(len(roots))]
 				slot := phase0.Slot(binary.LittleEndian.Uint64(root[:8]))
@@ -30,7 +34,9 @@ func TestBlockRootSlots(t *testing.T) {
 
 	// Concurrent getters.
 	for i := 0; i < 32; i++ {
+		wg.Add(1)
 		go func() {
+			defer wg.Done()
 			for j := 0; j < 1000; j++ {
 				root := roots[rand.Intn(len(roots))]
 				expectedSlot := phase0.Slot(binary.LittleEndian.Uint64(root[:8]))
@@ -43,6 +49,7 @@ func TestBlockRootSlots(t *testing.T) {
 	}
 
 	// Verify something was written.
+	wg.Wait()
 	require.Greater(t, s.Len(), 0)
 
 	// Set all roots.
