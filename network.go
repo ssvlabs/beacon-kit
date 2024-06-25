@@ -16,6 +16,7 @@ func (n Network) String() string {
 
 var Networks = map[Network]*Spec{
 	Mainnet.Network: Mainnet,
+	Holesky.Network: Holesky,
 	Prater.Network:  Prater,
 	Kiln.Network:    Kiln,
 	Ropsten.Network: Ropsten,
