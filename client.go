@@ -31,7 +31,6 @@ type Client interface {
 	eth2client.ValidatorRegistrationsSubmitter
 	eth2client.ProposalProvider
 	eth2client.ProposalSubmitter
-	eth2client.BlindedProposalProvider
 	eth2client.BlindedProposalSubmitter
 
 	eth2client.BeaconCommitteeSubscriptionsSubmitter

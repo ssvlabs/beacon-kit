@@ -147,28 +147,6 @@ func (m *methods) BeaconBlockRoot(ctx context.Context, opts *api.BeaconBlockRoot
 	return _result.pp1, _result.err
 }
 
-func (m *methods) BlindedProposal(ctx context.Context, opts *api.BlindedProposalOpts) (pp1 *api.Response[*api.VersionedBlindedProposal], err error) {
-	ctx = context.WithValue(ctx, methodCtxKey{}, "BlindedProposal")
-	type _resultStruct struct {
-		pp1 *api.Response[*api.VersionedBlindedProposal]
-		err error
-	}
-	var _result, _unchecked _resultStruct
-	var _mutex sync.Mutex
-	_result.err = m.callFunc(ctx, func(ctx context.Context, client beacon.Client) error {
-		pp1, err := client.BlindedProposal(ctx, opts)
-		_mutex.Lock()
-		defer _mutex.Unlock()
-		_unchecked = _resultStruct{pp1, err}
-		if err != nil {
-			return err
-		}
-		_result = _unchecked
-		return nil
-	})
-	return _result.pp1, _result.err
-}
-
 func (m *methods) Domain(ctx context.Context, domainType phase0.DomainType, epoch phase0.Epoch) (d1 phase0.Domain, err error) {
 	ctx = context.WithValue(ctx, methodCtxKey{}, "Domain")
 	type _resultStruct struct {
@@ -390,7 +368,7 @@ func (m *methods) SubmitBeaconCommitteeSubscriptions(ctx context.Context, subscr
 	return _result.err
 }
 
-func (m *methods) SubmitBlindedProposal(ctx context.Context, block *api.VersionedSignedBlindedProposal) (err error) {
+func (m *methods) SubmitBlindedProposal(ctx context.Context, opts *api.SubmitBlindedProposalOpts) (err error) {
 	ctx = context.WithValue(ctx, methodCtxKey{}, "SubmitBlindedProposal")
 	type _resultStruct struct {
 		err error
@@ -398,7 +376,7 @@ func (m *methods) SubmitBlindedProposal(ctx context.Context, block *api.Versione
 	var _result, _unchecked _resultStruct
 	var _mutex sync.Mutex
 	_result.err = m.callFunc(ctx, func(ctx context.Context, client beacon.Client) error {
-		err := client.SubmitBlindedProposal(ctx, block)
+		err := client.SubmitBlindedProposal(ctx, opts)
 		_mutex.Lock()
 		defer _mutex.Unlock()
 		_unchecked = _resultStruct{err}
@@ -411,7 +389,7 @@ func (m *methods) SubmitBlindedProposal(ctx context.Context, block *api.Versione
 	return _result.err
 }
 
-func (m *methods) SubmitProposal(ctx context.Context, block *api.VersionedSignedProposal) (err error) {
+func (m *methods) SubmitProposal(ctx context.Context, opts *api.SubmitProposalOpts) (err error) {
 	ctx = context.WithValue(ctx, methodCtxKey{}, "SubmitProposal")
 	type _resultStruct struct {
 		err error
@@ -419,7 +397,7 @@ func (m *methods) SubmitProposal(ctx context.Context, block *api.VersionedSigned
 	var _result, _unchecked _resultStruct
 	var _mutex sync.Mutex
 	_result.err = m.callFunc(ctx, func(ctx context.Context, client beacon.Client) error {
-		err := client.SubmitProposal(ctx, block)
+		err := client.SubmitProposal(ctx, opts)
 		_mutex.Lock()
 		defer _mutex.Unlock()
 		_unchecked = _resultStruct{err}
