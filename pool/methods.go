@@ -213,6 +213,14 @@ func (m *methods) GenesisDomain(ctx context.Context, domainType phase0.DomainTyp
 	return _result.d1, _result.err
 }
 
+func (m *methods) IsActive() (b1 bool) {
+	return m.defaultClient().IsActive()
+}
+
+func (m *methods) IsSynced() (b1 bool) {
+	return m.defaultClient().IsSynced()
+}
+
 func (m *methods) Name() (s1 string) {
 	return m.defaultClient().Name()
 }

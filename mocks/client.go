@@ -280,6 +280,42 @@ func (_m *Client) GenesisDomain(ctx context.Context, domainType phase0.DomainTyp
 	return r0, r1
 }
 
+// IsActive provides a mock function with given fields:
+func (_m *Client) IsActive() bool {
+	ret := _m.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for IsActive")
+	}
+
+	var r0 bool
+	if rf, ok := ret.Get(0).(func() bool); ok {
+		r0 = rf()
+	} else {
+		r0 = ret.Get(0).(bool)
+	}
+
+	return r0
+}
+
+// IsSynced provides a mock function with given fields:
+func (_m *Client) IsSynced() bool {
+	ret := _m.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for IsSynced")
+	}
+
+	var r0 bool
+	if rf, ok := ret.Get(0).(func() bool); ok {
+		r0 = rf()
+	} else {
+		r0 = ret.Get(0).(bool)
+	}
+
+	return r0
+}
+
 // Name provides a mock function with given fields:
 func (_m *Client) Name() string {
 	ret := _m.Called()
