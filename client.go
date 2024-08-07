@@ -14,6 +14,12 @@ type Client interface {
 	// Address returns the address of the client.
 	Address() string
 
+	// IsActive returns true if the client is active.
+	IsActive() bool
+
+	// IsSynced returns true if the client is synced.
+	IsSynced() bool
+
 	eth2client.SpecProvider
 	eth2client.GenesisProvider
 	eth2client.BeaconBlockRootProvider
@@ -31,7 +37,6 @@ type Client interface {
 	eth2client.ValidatorRegistrationsSubmitter
 	eth2client.ProposalProvider
 	eth2client.ProposalSubmitter
-	eth2client.BlindedProposalProvider
 	eth2client.BlindedProposalSubmitter
 
 	eth2client.BeaconCommitteeSubscriptionsSubmitter

@@ -47,6 +47,16 @@ func (c *Client) Address() string {
 	return c.service.Address()
 }
 
+// IsActive returns true if the client is active.
+func (c *Client) IsActive() bool {
+	return c.service.IsActive()
+}
+
+// IsSynced returns true if the client is synced.
+func (c *Client) IsSynced() bool {
+	return c.service.IsSynced()
+}
+
 func (c *Client) Spec(ctx context.Context, opts *api.SpecOpts) (*api.Response[map[string]interface{}], error) {
 	return checkResponse(c.service.(eth2client.SpecProvider).Spec(ctx, opts))
 }
@@ -182,29 +192,21 @@ func (c *Client) Proposal(ctx context.Context, opts *api.ProposalOpts) (*api.Res
 	return checkResponse(provider.Proposal(ctx, opts))
 }
 
-func (c *Client) SubmitProposal(ctx context.Context, proposal *api.VersionedSignedProposal) error {
+func (c *Client) SubmitProposal(ctx context.Context, opts *api.SubmitProposalOpts) error {
 	provider, ok := c.service.(eth2client.ProposalSubmitter)
 	if !ok {
 		return ErrCallNotSupported
 	}
-	return provider.SubmitProposal(ctx, proposal)
-}
-
-func (c *Client) BlindedProposal(ctx context.Context, opts *api.BlindedProposalOpts) (*api.Response[*api.VersionedBlindedProposal], error) {
-	provider, ok := c.service.(eth2client.BlindedProposalProvider)
-	if !ok {
-		return nil, ErrCallNotSupported
-	}
-	return checkResponse(provider.BlindedProposal(ctx, opts))
+	return provider.SubmitProposal(ctx, opts)
 }
 
 // SubmitBlindedBeaconBlock provides a mock function with given fields: ctx, block
-func (c *Client) SubmitBlindedProposal(ctx context.Context, block *api.VersionedSignedBlindedProposal) error {
+func (c *Client) SubmitBlindedProposal(ctx context.Context, opts *api.SubmitBlindedProposalOpts) error {
 	provider, ok := c.service.(eth2client.BlindedProposalSubmitter)
 	if !ok {
 		return ErrCallNotSupported
 	}
-	return provider.SubmitBlindedProposal(ctx, block)
+	return provider.SubmitBlindedProposal(ctx, opts)
 }
 
 func (c *Client) SubmitBeaconCommitteeSubscriptions(ctx context.Context, subscriptions []*apiv1.BeaconCommitteeSubscription) error {
