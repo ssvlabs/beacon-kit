@@ -47,6 +47,16 @@ func (c *Client) Address() string {
 	return c.service.Address()
 }
 
+// IsActive returns true if the client is active.
+func (c *Client) IsActive() bool {
+	return c.service.IsActive()
+}
+
+// IsSynced returns true if the client is synced.
+func (c *Client) IsSynced() bool {
+	return c.service.IsSynced()
+}
+
 func (c *Client) Spec(ctx context.Context, opts *api.SpecOpts) (*api.Response[map[string]interface{}], error) {
 	return checkResponse(c.service.(eth2client.SpecProvider).Spec(ctx, opts))
 }
