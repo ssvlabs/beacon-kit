@@ -47,13 +47,13 @@ func TestSubmitAttestations(t *testing.T) {
 	// Call SubmitAttestation and expect it to override
 	// the FirstSuccess and call both clients.
 	for _, c := range mockClients {
-		c.(*mocks.Client).On("SubmitAttestations", mock.Anything, []*phase0.Attestation{}).Maybe().Return(nil)
+		c.(*mocks.Client).On("SubmitAttestations", mock.Anything, &api.SubmitAttestationsOpts{}).Maybe().Return(nil)
 	}
-	err := client.SubmitAttestations(context.Background(), []*phase0.Attestation{})
+	err := client.SubmitAttestations(context.Background(), &api.SubmitAttestationsOpts{})
 	require.Equal(t, nil, err)
 
 	for _, c := range mockClients {
-		c.(*mocks.Client).AssertCalled(t, "SubmitAttestations", mock.Anything, []*phase0.Attestation{})
+		c.(*mocks.Client).AssertCalled(t, "SubmitAttestations", mock.Anything, &api.SubmitAttestationsOpts{})
 	}
 }
 

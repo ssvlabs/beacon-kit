@@ -225,15 +225,15 @@ func (c *Client) AttestationData(ctx context.Context, opts *api.AttestationDataO
 	return checkResponse(provider.AttestationData(ctx, opts))
 }
 
-func (c *Client) SubmitAttestations(ctx context.Context, attestations []*phase0.Attestation) error {
+func (c *Client) SubmitAttestations(ctx context.Context, opts *api.SubmitAttestationsOpts) error {
 	provider, ok := c.service.(eth2client.AttestationsSubmitter)
 	if !ok {
 		return ErrCallNotSupported
 	}
-	return provider.SubmitAttestations(ctx, attestations)
+	return provider.SubmitAttestations(ctx, opts)
 }
 
-func (c *Client) AggregateAttestation(ctx context.Context, opts *api.AggregateAttestationOpts) (*api.Response[*phase0.Attestation], error) {
+func (c *Client) AggregateAttestation(ctx context.Context, opts *api.AggregateAttestationOpts) (*api.Response[*spec.VersionedAttestation], error) {
 	provider, ok := c.service.(eth2client.AggregateAttestationProvider)
 	if !ok {
 		return nil, ErrCallNotSupported
@@ -241,12 +241,12 @@ func (c *Client) AggregateAttestation(ctx context.Context, opts *api.AggregateAt
 	return checkResponse(provider.AggregateAttestation(ctx, opts))
 }
 
-func (c *Client) SubmitAggregateAttestations(ctx context.Context, aggregateAndProofs []*phase0.SignedAggregateAndProof) error {
+func (c *Client) SubmitAggregateAttestations(ctx context.Context, opts *api.SubmitAggregateAttestationsOpts) error {
 	provider, ok := c.service.(eth2client.AggregateAttestationsSubmitter)
 	if !ok {
 		return ErrCallNotSupported
 	}
-	return provider.SubmitAggregateAttestations(ctx, aggregateAndProofs)
+	return provider.SubmitAggregateAttestations(ctx, opts)
 }
 
 func (c *Client) SubmitSyncCommitteeSubscriptions(ctx context.Context, subscriptions []*apiv1.SyncCommitteeSubscription) error {

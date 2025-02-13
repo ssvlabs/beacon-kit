@@ -179,12 +179,12 @@ func (c *Client) SubmitBeaconCommitteeSubscriptions(ctx context.Context, subscri
 	return c.submitter().SubmitBeaconCommitteeSubscriptions(ctx, subscriptions)
 }
 
-func (c *Client) SubmitAttestations(ctx context.Context, attestations []*phase0.Attestation) error {
-	return c.submitter().SubmitAttestations(ctx, attestations)
+func (c *Client) SubmitAttestations(ctx context.Context, opts *api.SubmitAttestationsOpts) error {
+	return c.submitter().SubmitAttestations(ctx, opts)
 }
 
-func (c *Client) SubmitAggregateAttestations(ctx context.Context, aggregateAndProofs []*phase0.SignedAggregateAndProof) error {
-	return c.submitter().SubmitAggregateAttestations(ctx, aggregateAndProofs)
+func (c *Client) SubmitAggregateAttestations(ctx context.Context, opts *api.SubmitAggregateAttestationsOpts) error {
+	return c.submitter().SubmitAggregateAttestations(ctx, opts)
 }
 
 func (c *Client) SubmitSyncCommitteeSubscriptions(ctx context.Context, subscriptions []*apiv1.SyncCommitteeSubscription) error {

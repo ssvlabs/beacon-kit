@@ -20,12 +20,12 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	rand.Seed(time.Now().UnixNano())
 	os.Exit(m.Run())
 }
 
 func TestPoolWithoutFirstSuccess(t *testing.T) {
-	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	knobs := TestPoolKnobs{
 		NumClients: 20,
