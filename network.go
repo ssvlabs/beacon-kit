@@ -19,7 +19,7 @@ var Networks = map[Network]*Spec{
 	Holesky.Network: Holesky,
 	Sepolia.Network: Sepolia,
 	Testnet.Network: Testnet,
-	Devnet6.Network: Devnet6,
+	PectraDevnet6.Network: PectraDevnet6,
 }
 
 var (
@@ -159,8 +159,8 @@ var (
 		DomainApplicationBuilder:          [4]byte{0, 0, 0, 1},
 	}
 
-	Devnet6 = &Spec{
-		Network:                              "devnet6",
+	PectraDevnet6 = &Spec{
+		Network:                              "pectra-devnet-6",
 		GenesisTime:                          time.Unix(1738603860, 0),
 		GenesisSlot:                          0,
 		GenesisForkVersion:                   phase0.Version{0x10, 0x58, 0x55, 0x57},
