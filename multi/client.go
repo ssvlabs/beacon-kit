@@ -187,6 +187,10 @@ func (c *Client) SubmitAggregateAttestations(ctx context.Context, opts *api.Subm
 	return c.submitter().SubmitAggregateAttestations(ctx, opts)
 }
 
+func (c *Client) BeaconCommittees(ctx context.Context, opts *api.BeaconCommitteesOpts) (*api.Response[[]*apiv1.BeaconCommittee], error) {
+	return c.submitter().BeaconCommittees(ctx, opts)
+}
+
 func (c *Client) SubmitSyncCommitteeSubscriptions(ctx context.Context, subscriptions []*apiv1.SyncCommitteeSubscription) error {
 	return c.submitter().SubmitSyncCommitteeSubscriptions(ctx, subscriptions)
 }

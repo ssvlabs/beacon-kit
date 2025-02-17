@@ -190,6 +190,36 @@ func (_m *Client) BeaconBlockRoot(ctx context.Context, opts *api.BeaconBlockRoot
 	return r0, r1
 }
 
+// BeaconCommittees provides a mock function with given fields: ctx, opts
+func (_m *Client) BeaconCommittees(ctx context.Context, opts *api.BeaconCommitteesOpts) (*api.Response[[]*v1.BeaconCommittee], error) {
+	ret := _m.Called(ctx, opts)
+
+	if len(ret) == 0 {
+		panic("no return value specified for BeaconCommittees")
+	}
+
+	var r0 *api.Response[[]*v1.BeaconCommittee]
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, *api.BeaconCommitteesOpts) (*api.Response[[]*v1.BeaconCommittee], error)); ok {
+		return rf(ctx, opts)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, *api.BeaconCommitteesOpts) *api.Response[[]*v1.BeaconCommittee]); ok {
+		r0 = rf(ctx, opts)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*api.Response[[]*v1.BeaconCommittee])
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, *api.BeaconCommitteesOpts) error); ok {
+		r1 = rf(ctx, opts)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // Domain provides a mock function with given fields: ctx, domainType, epoch
 func (_m *Client) Domain(ctx context.Context, domainType phase0.DomainType, epoch phase0.Epoch) (phase0.Domain, error) {
 	ret := _m.Called(ctx, domainType, epoch)

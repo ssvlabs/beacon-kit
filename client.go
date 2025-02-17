@@ -45,6 +45,8 @@ type Client interface {
 	eth2client.AggregateAttestationProvider
 	eth2client.AggregateAttestationsSubmitter
 
+	eth2client.BeaconCommitteesProvider
+
 	eth2client.SyncCommitteeSubscriptionsSubmitter
 	eth2client.SyncCommitteeMessagesSubmitter
 	eth2client.SyncCommitteeContributionProvider

@@ -241,6 +241,14 @@ func (c *Client) AggregateAttestation(ctx context.Context, opts *api.AggregateAt
 	return checkResponse(provider.AggregateAttestation(ctx, opts))
 }
 
+func (c *Client) BeaconCommittees(ctx context.Context, opts *api.BeaconCommitteesOpts) (*api.Response[[]*apiv1.BeaconCommittee], error) {
+	provider, ok := c.service.(eth2client.BeaconCommitteesProvider)
+	if !ok {
+		return nil, ErrCallNotSupported
+	}
+	return checkResponse(provider.BeaconCommittees(ctx, opts))
+}
+
 func (c *Client) SubmitAggregateAttestations(ctx context.Context, opts *api.SubmitAggregateAttestationsOpts) error {
 	provider, ok := c.service.(eth2client.AggregateAttestationsSubmitter)
 	if !ok {

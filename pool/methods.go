@@ -147,6 +147,28 @@ func (m *methods) BeaconBlockRoot(ctx context.Context, opts *api.BeaconBlockRoot
 	return _result.pp1, _result.err
 }
 
+func (m *methods) BeaconCommittees(ctx context.Context, opts *api.BeaconCommitteesOpts) (pp1 *api.Response[[]*apiv1.BeaconCommittee], err error) {
+	ctx = context.WithValue(ctx, methodCtxKey{}, "BeaconCommittees")
+	type _resultStruct struct {
+		pp1 *api.Response[[]*apiv1.BeaconCommittee]
+		err error
+	}
+	var _result, _unchecked _resultStruct
+	var _mutex sync.Mutex
+	_result.err = m.callFunc(ctx, func(ctx context.Context, client beacon.Client) error {
+		pp1, err := client.BeaconCommittees(ctx, opts)
+		_mutex.Lock()
+		defer _mutex.Unlock()
+		_unchecked = _resultStruct{pp1, err}
+		if err != nil {
+			return err
+		}
+		_result = _unchecked
+		return nil
+	})
+	return _result.pp1, _result.err
+}
+
 func (m *methods) Domain(ctx context.Context, domainType phase0.DomainType, epoch phase0.Epoch) (d1 phase0.Domain, err error) {
 	ctx = context.WithValue(ctx, methodCtxKey{}, "Domain")
 	type _resultStruct struct {
