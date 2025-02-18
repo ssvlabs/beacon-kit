@@ -44,7 +44,8 @@ func TestPoolUpdate(t *testing.T) {
 			})
 			time.Sleep(time.Millisecond * 15)
 			require.Len(t, pool.Clients(), test.expectedLen, "clients updated before connection")
-			g.Wait()
+			err := g.Wait()
+			require.NoError(t, err)
 			require.Len(t, pool.Clients(), len(test.addresses), "clients not updated after connection")
 		})
 	}

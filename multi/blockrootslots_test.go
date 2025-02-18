@@ -1,8 +1,9 @@
 package multi
 
 import (
+	"crypto/rand"
 	"encoding/binary"
-	"math/rand"
+	"math/big"
 	"sync"
 	"testing"
 
@@ -13,7 +14,8 @@ import (
 func TestBlockRootSlots(t *testing.T) {
 	roots := make([]phase0.Root, 10e3)
 	for i := 0; i < len(roots); i++ {
-		rand.Read(roots[i][:])
+		_, err := rand.Read(roots[i][:])
+		require.NoError(t, err)
 	}
 
 	s := newBlockRootSlots()
@@ -25,7 +27,9 @@ func TestBlockRootSlots(t *testing.T) {
 		go func() {
 			defer wg.Done()
 			for j := 0; j < 1000; j++ {
-				root := roots[rand.Intn(len(roots))]
+				rnd, err := rand.Int(rand.Reader, big.NewInt(int64(len(roots))))
+				require.NoError(t, err)
+				root := roots[rnd.Int64()]
 				slot := phase0.Slot(binary.LittleEndian.Uint64(root[:8]))
 				s.Set(root, slot)
 			}
@@ -38,7 +42,9 @@ func TestBlockRootSlots(t *testing.T) {
 		go func() {
 			defer wg.Done()
 			for j := 0; j < 1000; j++ {
-				root := roots[rand.Intn(len(roots))]
+				rnd, err := rand.Int(rand.Reader, big.NewInt(int64(len(roots))))
+				require.NoError(t, err)
+				root := roots[rnd.Int64()]
 				expectedSlot := phase0.Slot(binary.LittleEndian.Uint64(root[:8]))
 				slot, ok := s.Get(root)
 				if ok {

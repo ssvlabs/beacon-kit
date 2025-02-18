@@ -37,10 +37,10 @@ func (m *methods) Address() (s1 string) {
 	return m.defaultClient().Address()
 }
 
-func (m *methods) AggregateAttestation(ctx context.Context, opts *api.AggregateAttestationOpts) (pp1 *api.Response[*phase0.Attestation], err error) {
+func (m *methods) AggregateAttestation(ctx context.Context, opts *api.AggregateAttestationOpts) (pp1 *api.Response[*spec.VersionedAttestation], err error) {
 	ctx = context.WithValue(ctx, methodCtxKey{}, "AggregateAttestation")
 	type _resultStruct struct {
-		pp1 *api.Response[*phase0.Attestation]
+		pp1 *api.Response[*spec.VersionedAttestation]
 		err error
 	}
 	var _result, _unchecked _resultStruct
@@ -135,6 +135,28 @@ func (m *methods) BeaconBlockRoot(ctx context.Context, opts *api.BeaconBlockRoot
 	var _mutex sync.Mutex
 	_result.err = m.callFunc(ctx, func(ctx context.Context, client beacon.Client) error {
 		pp1, err := client.BeaconBlockRoot(ctx, opts)
+		_mutex.Lock()
+		defer _mutex.Unlock()
+		_unchecked = _resultStruct{pp1, err}
+		if err != nil {
+			return err
+		}
+		_result = _unchecked
+		return nil
+	})
+	return _result.pp1, _result.err
+}
+
+func (m *methods) BeaconCommittees(ctx context.Context, opts *api.BeaconCommitteesOpts) (pp1 *api.Response[[]*apiv1.BeaconCommittee], err error) {
+	ctx = context.WithValue(ctx, methodCtxKey{}, "BeaconCommittees")
+	type _resultStruct struct {
+		pp1 *api.Response[[]*apiv1.BeaconCommittee]
+		err error
+	}
+	var _result, _unchecked _resultStruct
+	var _mutex sync.Mutex
+	_result.err = m.callFunc(ctx, func(ctx context.Context, client beacon.Client) error {
+		pp1, err := client.BeaconCommittees(ctx, opts)
 		_mutex.Lock()
 		defer _mutex.Unlock()
 		_unchecked = _resultStruct{pp1, err}
@@ -313,7 +335,7 @@ func (m *methods) Spec(ctx context.Context, opts *api.SpecOpts) (pp1 *api.Respon
 	return _result.pp1, _result.err
 }
 
-func (m *methods) SubmitAggregateAttestations(ctx context.Context, aggregateAndProofs []*phase0.SignedAggregateAndProof) (err error) {
+func (m *methods) SubmitAggregateAttestations(ctx context.Context, opts *api.SubmitAggregateAttestationsOpts) (err error) {
 	ctx = context.WithValue(ctx, methodCtxKey{}, "SubmitAggregateAttestations")
 	type _resultStruct struct {
 		err error
@@ -321,7 +343,7 @@ func (m *methods) SubmitAggregateAttestations(ctx context.Context, aggregateAndP
 	var _result, _unchecked _resultStruct
 	var _mutex sync.Mutex
 	_result.err = m.callFunc(ctx, func(ctx context.Context, client beacon.Client) error {
-		err := client.SubmitAggregateAttestations(ctx, aggregateAndProofs)
+		err := client.SubmitAggregateAttestations(ctx, opts)
 		_mutex.Lock()
 		defer _mutex.Unlock()
 		_unchecked = _resultStruct{err}
@@ -334,7 +356,7 @@ func (m *methods) SubmitAggregateAttestations(ctx context.Context, aggregateAndP
 	return _result.err
 }
 
-func (m *methods) SubmitAttestations(ctx context.Context, attestations []*phase0.Attestation) (err error) {
+func (m *methods) SubmitAttestations(ctx context.Context, opts *api.SubmitAttestationsOpts) (err error) {
 	ctx = context.WithValue(ctx, methodCtxKey{}, "SubmitAttestations")
 	type _resultStruct struct {
 		err error
@@ -342,7 +364,7 @@ func (m *methods) SubmitAttestations(ctx context.Context, attestations []*phase0
 	var _result, _unchecked _resultStruct
 	var _mutex sync.Mutex
 	_result.err = m.callFunc(ctx, func(ctx context.Context, client beacon.Client) error {
-		err := client.SubmitAttestations(ctx, attestations)
+		err := client.SubmitAttestations(ctx, opts)
 		_mutex.Lock()
 		defer _mutex.Unlock()
 		_unchecked = _resultStruct{err}
