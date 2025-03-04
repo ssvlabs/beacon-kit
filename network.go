@@ -15,11 +15,12 @@ func (n Network) String() string {
 }
 
 var Networks = map[Network]*Spec{
-	Mainnet.Network: Mainnet,
-	Holesky.Network: Holesky,
-	Sepolia.Network: Sepolia,
-	Testnet.Network: Testnet,
+	Mainnet.Network:       Mainnet,
+	Holesky.Network:       Holesky,
+	Sepolia.Network:       Sepolia,
+	Testnet.Network:       Testnet,
 	PectraDevnet6.Network: PectraDevnet6,
+	PectraDevnet7.Network: PectraDevnet7,
 }
 
 var (
@@ -164,6 +165,40 @@ var (
 		GenesisTime:                          time.Unix(1738603860, 0),
 		GenesisSlot:                          0,
 		GenesisForkVersion:                   phase0.Version{0x10, 0x58, 0x55, 0x57},
+		FarFutureEpoch:                       phase0.Epoch(math.MaxUint64),
+		SlotsPerEpoch:                        32,
+		SecondsPerSlot:                       12,
+		MaxCommitteesPerSlot:                 64,
+		TargetCommitteeSize:                  128,
+		TargetAggregatorsPerCommittee:        16,
+		AttestationSubnetCount:               64,
+		AttestationPropagationSlotRange:      32,
+		SyncCommitteeSize:                    512,
+		SyncCommitteeSubnetCount:             4,
+		TargetAggregatorsPerSyncSubcommittee: 16,
+		EpochsPerSyncCommitteePeriod:         256,
+		AltairForkEpoch:                      0,
+		BellatrixForkEpoch:                   0,
+
+		DomainBeaconProposer:              [4]byte{0, 0, 0, 0},
+		DomainBeaconAttester:              [4]byte{1, 0, 0, 0},
+		DomainRandao:                      [4]byte{2, 0, 0, 0},
+		DomainDeposit:                     [4]byte{3, 0, 0, 0},
+		DomainVoluntaryExit:               [4]byte{4, 0, 0, 0},
+		DomainSelectionProof:              [4]byte{5, 0, 0, 0},
+		DomainAggregateAndProof:           [4]byte{6, 0, 0, 0},
+		DomainSyncCommittee:               [4]byte{7, 0, 0, 0},
+		DomainSyncCommitteeSelectionProof: [4]byte{8, 0, 0, 0},
+		DomainContributionAndProof:        [4]byte{9, 0, 0, 0},
+		DomainApplicationMask:             [4]byte{0, 0, 0, 1},
+		DomainApplicationBuilder:          [4]byte{0, 0, 0, 1},
+	}
+
+	PectraDevnet7 = &Spec{
+		Network:                              "pectra-devnet-7",
+		GenesisTime:                          time.Unix(1740610860, 0),
+		GenesisSlot:                          0,
+		GenesisForkVersion:                   phase0.Version{0x10, 0x95, 0x25, 0x61},
 		FarFutureEpoch:                       phase0.Epoch(math.MaxUint64),
 		SlotsPerEpoch:                        32,
 		SecondsPerSlot:                       12,
