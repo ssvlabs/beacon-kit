@@ -1,5 +1,5 @@
-github.com/attestantio/go-eth2-client v0.24.0 h1:lGVbcnhlBwRglt1Zs56JOCgXVyLWKFZOmZN8jKhE7Ws=
-github.com/attestantio/go-eth2-client v0.24.0/go.mod h1:/KTLN3WuH1xrJL7ZZrpBoWM1xCCihnFbzequD5L+83o=
+github.com/attestantio/go-eth2-client v0.24.1 h1:DZ/2O83eUcSfPPs63xF6fdXDe4afA4nlt5j0y2cweOI=
+github.com/attestantio/go-eth2-client v0.24.1/go.mod h1:/KTLN3WuH1xrJL7ZZrpBoWM1xCCihnFbzequD5L+83o=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/emicklei/dot v1.6.4 h1:cG9ycT67d9Yw22G+mAb4XiuUz6E6H1S0zePp/5Cwe/c=

@@ -91,6 +91,8 @@ github.com/vektra/mockery/v2 v2.52.2 h1:8QfPKUIrq8P3Cs7G79Iu4Byd5wdhGCE0quIS27x7
 github.com/vektra/mockery/v2 v2.52.2/go.mod h1:zGDY/f6bip0Yh13GQ5j7xa43fuEoYBa4ICHEaihisHw=
 github.com/vektra/mockery/v2 v2.53.0 h1:QyZI8V2c+7oOEP/OnZjMMPlONXTgSsiLtaszzUz0yz0=
 github.com/vektra/mockery/v2 v2.53.0/go.mod h1:d0FVY5GgakIHczpYNVMLpYF2DttDgc97fHFTMcT3xlE=
+github.com/vektra/mockery/v2 v2.53.2 h1:4G/4fl9x722Yb8hLqH1YU3XZNRJFwl5KUMvpkmAyuC8=
+github.com/vektra/mockery/v2 v2.53.2/go.mod h1:UJT+mgXhCcOCHXTnM5cJHCZL+d76BYB+EbY1sFztEB8=
 go.uber.org/multierr v1.11.0 h1:blXXJkSxSSfBVBlC76pxqeO+LN3aDfLQo+309xJstO0=
 go.uber.org/multierr v1.11.0/go.mod h1:20+QtiLqy0Nd6FdQB9TLXag12DsQkrbs3htMFfDN80Y=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=

@@ -3,7 +3,7 @@ module github.com/bloxapp/beacon-kit
 go 1.24
 
 require (
-	github.com/attestantio/go-eth2-client v0.24.0
+	github.com/attestantio/go-eth2-client v0.24.1
 	github.com/google/uuid v1.6.0
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/stretchr/testify v1.10.0
