@@ -13,6 +13,11 @@ clean:
 test:
 	go test ./...
 
+.PHONY: lint
+lint:
+	$(GET_TOOL) github.com/golangci/golangci-lint/v2/cmd/golangci-lint@latest
+	$(RUN_TOOL) github.com/golangci/golangci-lint/v2/cmd/golangci-lint run -v ./...
+
 .PHONY: tool
 tool:
 	$(GET_TOOL) github.com/vektra/mockery/v2@latest
