@@ -8,6 +8,7 @@ import (
 	"sync"
 
 	eth2client "github.com/attestantio/go-eth2-client"
+	"github.com/attestantio/go-eth2-client/api"
 	v1 "github.com/attestantio/go-eth2-client/api/v1"
 	"github.com/bloxapp/beacon-kit"
 	"github.com/google/uuid"
@@ -139,14 +140,14 @@ type subscription struct {
 
 type EventHandlerFunc func(beacon.Client, *v1.Event)
 
-func (c *Client) Events(ctx context.Context, topics []string, handler eth2client.EventHandlerFunc) error {
+func (c *Client) Events(ctx context.Context, opts *api.EventsOpts) error {
 	func() {
 		c.subscriptionsMu.Lock()
 		defer c.subscriptionsMu.Unlock()
 		c.desiredSubscriptions[uuid.New()] = subscription{
-			topics: topics,
+			topics: opts.Topics,
 			handler: func(c beacon.Client, e *v1.Event) {
-				handler(e)
+				opts.Handler(e)
 			},
 		}
 	}()
@@ -217,8 +218,11 @@ func (c *Client) updateSubscriptions(ctx context.Context) error {
 			func(client beacon.Client, sub subscription, subscriptionUUID uuid.UUID) {
 				g.Go(func() error {
 					log.Printf("Subscribing %s to %s (UUID: %x)", strings.ToUpper(sub.topics[0]), client.Address(), subscriptionUUID[:])
-					return provider.Events(subscriptionCtx, sub.topics, func(e *v1.Event) {
-						sub.handler(client, e)
+					return provider.Events(subscriptionCtx, &api.EventsOpts{
+						Topics: sub.topics,
+						Handler: func(e *v1.Event) {
+							sub.handler(client, e)
+						},
 					})
 				})
 			}(client, sub, subscriptionUUID)
