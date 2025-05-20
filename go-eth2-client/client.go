@@ -289,12 +289,15 @@ func (c *Client) SubmitSyncCommitteeContributions(ctx context.Context, contribut
 	return provider.SubmitSyncCommitteeContributions(ctx, contributionAndProofs)
 }
 
-func (c *Client) Events(ctx context.Context, topics []string, handler eth2client.EventHandlerFunc) error {
+func (c *Client) Events(ctx context.Context, opts *api.EventsOpts) error {
 	provider, ok := c.service.(eth2client.EventsProvider)
 	if !ok {
 		return ErrCallNotSupported
 	}
-	return provider.Events(ctx, topics, handler)
+	return provider.Events(ctx, &api.EventsOpts{
+		Topics:  opts.Topics,
+		Handler: opts.Handler,
+	})
 }
 
 func checkResponse[T any](resp *api.Response[T], err error) (*api.Response[T], error) {
