@@ -677,6 +677,8 @@ github.com/vektra/mockery/v2 v2.53.2 h1:4G/4fl9x722Yb8hLqH1YU3XZNRJFwl5KUMvpkmAy
 github.com/vektra/mockery/v2 v2.53.2/go.mod h1:UJT+mgXhCcOCHXTnM5cJHCZL+d76BYB+EbY1sFztEB8=
 github.com/vektra/mockery/v2 v2.53.3 h1:yBU8XrzntcZdcNRRv+At0anXgSaFtgkyVUNm3f4an3U=
 github.com/vektra/mockery/v2 v2.53.3/go.mod h1:hIFFb3CvzPdDJJiU7J4zLRblUMv7OuezWsHPmswriwo=
+github.com/vektra/mockery/v2 v2.53.4 h1:abBWJLUQppM7T/VsLasBwgl7XXQRWH6lC3bnbJpOCLk=
+github.com/vektra/mockery/v2 v2.53.4/go.mod h1:hIFFb3CvzPdDJJiU7J4zLRblUMv7OuezWsHPmswriwo=
 github.com/xen0n/gosmopolitan v1.2.2 h1:/p2KTnMzwRexIW8GlKawsTWOxn7UHA+jCMF/V8HHtvU=
 github.com/xen0n/gosmopolitan v1.2.2/go.mod h1:7XX7Mj61uLYrj0qmeN0zi7XDon9JRAEhYQqAPLVNTeg=
 github.com/xen0n/gosmopolitan v1.3.0 h1:zAZI1zefvo7gcpbCOrPSHJZJYA9ZgLfJqtKzZ5pHqQM=
