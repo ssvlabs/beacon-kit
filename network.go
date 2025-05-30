@@ -18,7 +18,6 @@ var Networks = map[Network]*Spec{
 	Mainnet.Network: Mainnet,
 	Holesky.Network: Holesky,
 	Sepolia.Network: Sepolia,
-	Testnet.Network: Testnet,
 	Hoodi.Network:   Hoodi,
 }
 
@@ -110,40 +109,6 @@ var (
 		EpochsPerSyncCommitteePeriod:         256,
 		AltairForkEpoch:                      50,
 		BellatrixForkEpoch:                   100,
-
-		DomainBeaconProposer:              [4]byte{0, 0, 0, 0},
-		DomainBeaconAttester:              [4]byte{1, 0, 0, 0},
-		DomainRandao:                      [4]byte{2, 0, 0, 0},
-		DomainDeposit:                     [4]byte{3, 0, 0, 0},
-		DomainVoluntaryExit:               [4]byte{4, 0, 0, 0},
-		DomainSelectionProof:              [4]byte{5, 0, 0, 0},
-		DomainAggregateAndProof:           [4]byte{6, 0, 0, 0},
-		DomainSyncCommittee:               [4]byte{7, 0, 0, 0},
-		DomainSyncCommitteeSelectionProof: [4]byte{8, 0, 0, 0},
-		DomainContributionAndProof:        [4]byte{9, 0, 0, 0},
-		DomainApplicationMask:             [4]byte{0, 0, 0, 1},
-		DomainApplicationBuilder:          [4]byte{0, 0, 0, 1},
-	}
-
-	Testnet = &Spec{
-		Network:                              "testnet",
-		GenesisTime:                          time.Time{},
-		GenesisSlot:                          0,
-		GenesisForkVersion:                   phase0.Version{0x0, 0x69, 0x0, 0x69},
-		FarFutureEpoch:                       phase0.Epoch(math.MaxUint64),
-		SlotsPerEpoch:                        32,
-		SecondsPerSlot:                       3,
-		MaxCommitteesPerSlot:                 64,
-		TargetCommitteeSize:                  128,
-		TargetAggregatorsPerCommittee:        16,
-		AttestationSubnetCount:               64,
-		AttestationPropagationSlotRange:      32,
-		SyncCommitteeSize:                    512,
-		SyncCommitteeSubnetCount:             4,
-		TargetAggregatorsPerSyncSubcommittee: 16,
-		EpochsPerSyncCommitteePeriod:         256,
-		AltairForkEpoch:                      phase0.Epoch(math.MaxUint64),
-		BellatrixForkEpoch:                   phase0.Epoch(math.MaxUint64),
 
 		DomainBeaconProposer:              [4]byte{0, 0, 0, 0},
 		DomainBeaconAttester:              [4]byte{1, 0, 0, 0},
