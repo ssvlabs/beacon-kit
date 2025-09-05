@@ -1,4 +1,4 @@
-module github.com/bloxapp/beacon-kit/tools
+module github.com/ssvlabs/beacon-kit/tools
 
 go 1.24
 

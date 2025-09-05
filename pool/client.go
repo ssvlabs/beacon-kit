@@ -10,9 +10,9 @@ import (
 	eth2client "github.com/attestantio/go-eth2-client"
 	"github.com/attestantio/go-eth2-client/api"
 	v1 "github.com/attestantio/go-eth2-client/api/v1"
-	"github.com/bloxapp/beacon-kit"
 	"github.com/google/uuid"
 	"github.com/hashicorp/go-multierror"
+	"github.com/ssvlabs/beacon-kit"
 )
 
 // state holds properties for Client, so that a pointer to it can be shared for read/write

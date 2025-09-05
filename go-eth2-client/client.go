@@ -11,7 +11,7 @@ import (
 	"github.com/attestantio/go-eth2-client/spec"
 	"github.com/attestantio/go-eth2-client/spec/altair"
 	"github.com/attestantio/go-eth2-client/spec/phase0"
-	"github.com/bloxapp/beacon-kit"
+	"github.com/ssvlabs/beacon-kit"
 )
 
 // ErrCallNotSupported is returned when the implementation does not support the requested call.

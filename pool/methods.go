@@ -4,7 +4,7 @@
 
 package pool
 
-//go:generate gowrap gen -p github.com/bloxapp/beacon-kit -i Client -t methods.template -o methods.go -l ""
+//go:generate gowrap gen -p github.com/ssvlabs/beacon-kit -i Client -t methods.template -o methods.go -l ""
 
 import (
 	"context"
@@ -15,7 +15,7 @@ import (
 	"github.com/attestantio/go-eth2-client/spec"
 	"github.com/attestantio/go-eth2-client/spec/altair"
 	"github.com/attestantio/go-eth2-client/spec/phase0"
-	"github.com/bloxapp/beacon-kit"
+	"github.com/ssvlabs/beacon-kit"
 )
 
 type methods struct {

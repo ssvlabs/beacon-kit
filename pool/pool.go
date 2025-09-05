@@ -4,8 +4,8 @@ import (
 	"context"
 	"sync"
 
-	"github.com/bloxapp/beacon-kit"
 	"github.com/hashicorp/go-multierror"
+	"github.com/ssvlabs/beacon-kit"
 	"go.uber.org/zap"
 )
 

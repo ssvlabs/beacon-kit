@@ -10,9 +10,9 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 
-	"github.com/bloxapp/beacon-kit"
-	"github.com/bloxapp/beacon-kit/mocks"
-	"github.com/bloxapp/beacon-kit/pool"
+	"github.com/ssvlabs/beacon-kit"
+	"github.com/ssvlabs/beacon-kit/mocks"
+	"github.com/ssvlabs/beacon-kit/pool"
 )
 
 func TestWith(t *testing.T) {
