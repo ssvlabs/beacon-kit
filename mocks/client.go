@@ -724,6 +724,36 @@ func (_m *Client) SyncCommitteeDuties(ctx context.Context, opts *api.SyncCommitt
 	return r0, r1
 }
 
+// ValidatorBalances provides a mock function with given fields: ctx, opts
+func (_m *Client) ValidatorBalances(ctx context.Context, opts *api.ValidatorBalancesOpts) (*api.Response[map[phase0.ValidatorIndex]phase0.Gwei], error) {
+	ret := _m.Called(ctx, opts)
+
+	if len(ret) == 0 {
+		panic("no return value specified for ValidatorBalances")
+	}
+
+	var r0 *api.Response[map[phase0.ValidatorIndex]phase0.Gwei]
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, *api.ValidatorBalancesOpts) (*api.Response[map[phase0.ValidatorIndex]phase0.Gwei], error)); ok {
+		return rf(ctx, opts)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, *api.ValidatorBalancesOpts) *api.Response[map[phase0.ValidatorIndex]phase0.Gwei]); ok {
+		r0 = rf(ctx, opts)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*api.Response[map[phase0.ValidatorIndex]phase0.Gwei])
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, *api.ValidatorBalancesOpts) error); ok {
+		r1 = rf(ctx, opts)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // Validators provides a mock function with given fields: ctx, opts
 func (_m *Client) Validators(ctx context.Context, opts *api.ValidatorsOpts) (*api.Response[map[phase0.ValidatorIndex]*v1.Validator], error) {
 	ret := _m.Called(ctx, opts)

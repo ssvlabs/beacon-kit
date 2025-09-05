@@ -589,6 +589,28 @@ func (m *methods) SyncCommitteeDuties(ctx context.Context, opts *api.SyncCommitt
 	return _result.pp1, _result.err
 }
 
+func (m *methods) ValidatorBalances(ctx context.Context, opts *api.ValidatorBalancesOpts) (pp1 *api.Response[map[phase0.ValidatorIndex]phase0.Gwei], err error) {
+	ctx = context.WithValue(ctx, methodCtxKey{}, "ValidatorBalances")
+	type _resultStruct struct {
+		pp1 *api.Response[map[phase0.ValidatorIndex]phase0.Gwei]
+		err error
+	}
+	var _result, _unchecked _resultStruct
+	var _mutex sync.Mutex
+	_result.err = m.callFunc(ctx, func(ctx context.Context, client beacon.Client) error {
+		pp1, err := client.ValidatorBalances(ctx, opts)
+		_mutex.Lock()
+		defer _mutex.Unlock()
+		_unchecked = _resultStruct{pp1, err}
+		if err != nil {
+			return err
+		}
+		_result = _unchecked
+		return nil
+	})
+	return _result.pp1, _result.err
+}
+
 func (m *methods) Validators(ctx context.Context, opts *api.ValidatorsOpts) (pp1 *api.Response[map[phase0.ValidatorIndex]*apiv1.Validator], err error) {
 	ctx = context.WithValue(ctx, methodCtxKey{}, "Validators")
 	type _resultStruct struct {

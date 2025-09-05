@@ -5,7 +5,7 @@ import (
 )
 
 // Client is an interface which interacts with a Beacon node.
-// NOTE: "make generate" MUST be run after changing this interface,
+// NOTE: "make tool" MUST be run after changing this interface,
 // in order to update any generated code which depends on it.
 type Client interface {
 	// Name returns the name of the client implementation.
@@ -28,6 +28,7 @@ type Client interface {
 	eth2client.DomainProvider
 
 	eth2client.ValidatorsProvider
+	eth2client.ValidatorBalancesProvider
 
 	eth2client.ProposerDutiesProvider
 	eth2client.AttesterDutiesProvider
