@@ -191,6 +191,27 @@ func (m *methods) Domain(ctx context.Context, domainType phase0.DomainType, epoc
 	return _result.d1, _result.err
 }
 
+func (m *methods) Events(ctx context.Context, opts *api.EventsOpts) (err error) {
+	ctx = context.WithValue(ctx, methodCtxKey{}, "Events")
+	type _resultStruct struct {
+		err error
+	}
+	var _result, _unchecked _resultStruct
+	var _mutex sync.Mutex
+	_result.err = m.callFunc(ctx, func(ctx context.Context, client beacon.Client) error {
+		err := client.Events(ctx, opts)
+		_mutex.Lock()
+		defer _mutex.Unlock()
+		_unchecked = _resultStruct{err}
+		if err != nil {
+			return err
+		}
+		_result = _unchecked
+		return nil
+	})
+	return _result.err
+}
+
 func (m *methods) Genesis(ctx context.Context, opts *api.GenesisOpts) (pp1 *api.Response[*apiv1.Genesis], err error) {
 	ctx = context.WithValue(ctx, methodCtxKey{}, "Genesis")
 	type _resultStruct struct {

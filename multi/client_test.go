@@ -68,6 +68,7 @@ func TestBestAttestationDataSelection(t *testing.T) {
 	// Create an offline client (which will never return).
 	offlineClient := mocks.NewClient(t)
 	offlineClient.On("Address", mock.Anything).Return("offline")
+	offlineClient.On("Events", mock.Anything, mock.Anything).Return(nil)
 	offlineClient.On("AttestationData", mock.Anything, mock.Anything, mock.Anything).Run(func(args mock.Arguments) {
 		<-args.Get(0).(context.Context).Done()
 	}).Return(nil, context.Canceled)
@@ -75,6 +76,7 @@ func TestBestAttestationDataSelection(t *testing.T) {
 	// Create an online client (which will return immediately).
 	onlineClient := mocks.NewClient(t)
 	onlineClient.On("Address", mock.Anything).Return("online")
+	onlineClient.On("Events", mock.Anything, mock.Anything).Return(nil)
 	onlineClient.On("AttestationData", mock.Anything, mock.Anything, mock.Anything).Return(&api.Response[*phase0.AttestationData]{Data: &phase0.AttestationData{}}, nil)
 
 	// Create a multi.Client with BestAttestationDataSelection.

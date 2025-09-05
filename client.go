@@ -52,4 +52,6 @@ type Client interface {
 	eth2client.SyncCommitteeMessagesSubmitter
 	eth2client.SyncCommitteeContributionProvider
 	eth2client.SyncCommitteeContributionsSubmitter
+
+	eth2client.EventsProvider
 }
