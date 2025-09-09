@@ -23,4 +23,4 @@ tool:
 	$(GET_TOOL) github.com/vektra/mockery/v2@latest
 	$(GET_TOOL) github.com/hexdigest/gowrap/cmd/gowrap@latest
 	$(RUN_TOOL) github.com/vektra/mockery/v2 --name Client && mv mocks/Client.go mocks/client.go
-	$(RUN_TOOL) github.com/hexdigest/gowrap/cmd/gowrap gen -p github.com/bloxapp/beacon-kit -i Client -t ./pool/methods.template -o ./pool/methods.go -l ""
+	$(RUN_TOOL) github.com/hexdigest/gowrap/cmd/gowrap gen -p github.com/ssvlabs/beacon-kit -i Client -t ./pool/methods.template -o ./pool/methods.go -l ""

@@ -11,7 +11,7 @@ import (
 	"github.com/attestantio/go-eth2-client/spec"
 	"github.com/attestantio/go-eth2-client/spec/altair"
 	"github.com/attestantio/go-eth2-client/spec/phase0"
-	"github.com/bloxapp/beacon-kit"
+	"github.com/ssvlabs/beacon-kit"
 )
 
 // ErrCallNotSupported is returned when the implementation does not support the requested call.
@@ -166,6 +166,14 @@ func (c *Client) Validators(ctx context.Context, opts *api.ValidatorsOpts) (*api
 		return nil, ErrCallNotSupported
 	}
 	return checkResponse(provider.Validators(ctx, opts))
+}
+
+func (c *Client) ValidatorBalances(ctx context.Context, opts *api.ValidatorBalancesOpts) (*api.Response[map[phase0.ValidatorIndex]phase0.Gwei], error) {
+	provider, ok := c.service.(eth2client.ValidatorBalancesProvider)
+	if !ok {
+		return nil, ErrCallNotSupported
+	}
+	return provider.ValidatorBalances(ctx, opts)
 }
 
 func (c *Client) SubmitProposalPreparations(ctx context.Context, preparations []*apiv1.ProposalPreparation) error {

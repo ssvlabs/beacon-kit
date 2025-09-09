@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/bloxapp/beacon-kit"
+	"github.com/ssvlabs/beacon-kit"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"

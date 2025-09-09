@@ -4,7 +4,7 @@
 
 package pool
 
-//go:generate gowrap gen -p github.com/bloxapp/beacon-kit -i Client -t methods.template -o methods.go -l ""
+//go:generate gowrap gen -p github.com/ssvlabs/beacon-kit -i Client -t methods.template -o methods.go -l ""
 
 import (
 	"context"
@@ -15,7 +15,7 @@ import (
 	"github.com/attestantio/go-eth2-client/spec"
 	"github.com/attestantio/go-eth2-client/spec/altair"
 	"github.com/attestantio/go-eth2-client/spec/phase0"
-	"github.com/bloxapp/beacon-kit"
+	"github.com/ssvlabs/beacon-kit"
 )
 
 type methods struct {
@@ -189,6 +189,27 @@ func (m *methods) Domain(ctx context.Context, domainType phase0.DomainType, epoc
 		return nil
 	})
 	return _result.d1, _result.err
+}
+
+func (m *methods) Events(ctx context.Context, opts *api.EventsOpts) (err error) {
+	ctx = context.WithValue(ctx, methodCtxKey{}, "Events")
+	type _resultStruct struct {
+		err error
+	}
+	var _result, _unchecked _resultStruct
+	var _mutex sync.Mutex
+	_result.err = m.callFunc(ctx, func(ctx context.Context, client beacon.Client) error {
+		err := client.Events(ctx, opts)
+		_mutex.Lock()
+		defer _mutex.Unlock()
+		_unchecked = _resultStruct{err}
+		if err != nil {
+			return err
+		}
+		_result = _unchecked
+		return nil
+	})
+	return _result.err
 }
 
 func (m *methods) Genesis(ctx context.Context, opts *api.GenesisOpts) (pp1 *api.Response[*apiv1.Genesis], err error) {
@@ -577,6 +598,28 @@ func (m *methods) SyncCommitteeDuties(ctx context.Context, opts *api.SyncCommitt
 	var _mutex sync.Mutex
 	_result.err = m.callFunc(ctx, func(ctx context.Context, client beacon.Client) error {
 		pp1, err := client.SyncCommitteeDuties(ctx, opts)
+		_mutex.Lock()
+		defer _mutex.Unlock()
+		_unchecked = _resultStruct{pp1, err}
+		if err != nil {
+			return err
+		}
+		_result = _unchecked
+		return nil
+	})
+	return _result.pp1, _result.err
+}
+
+func (m *methods) ValidatorBalances(ctx context.Context, opts *api.ValidatorBalancesOpts) (pp1 *api.Response[map[phase0.ValidatorIndex]phase0.Gwei], err error) {
+	ctx = context.WithValue(ctx, methodCtxKey{}, "ValidatorBalances")
+	type _resultStruct struct {
+		pp1 *api.Response[map[phase0.ValidatorIndex]phase0.Gwei]
+		err error
+	}
+	var _result, _unchecked _resultStruct
+	var _mutex sync.Mutex
+	_result.err = m.callFunc(ctx, func(ctx context.Context, client beacon.Client) error {
+		pp1, err := client.ValidatorBalances(ctx, opts)
 		_mutex.Lock()
 		defer _mutex.Unlock()
 		_unchecked = _resultStruct{pp1, err}

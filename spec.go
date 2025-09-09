@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/attestantio/go-eth2-client/spec/phase0"
-	"github.com/bloxapp/beacon-kit/clock"
+	"github.com/ssvlabs/beacon-kit/clock"
 )
 
 // Spec contains the network-specific Beacon Chain configuration

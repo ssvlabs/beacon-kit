@@ -12,9 +12,9 @@ import (
 	"github.com/attestantio/go-eth2-client/spec/phase0"
 	"go.uber.org/zap"
 
-	"github.com/bloxapp/beacon-kit"
-	"github.com/bloxapp/beacon-kit/logging"
-	"github.com/bloxapp/beacon-kit/pool"
+	"github.com/ssvlabs/beacon-kit"
+	"github.com/ssvlabs/beacon-kit/logging"
+	"github.com/ssvlabs/beacon-kit/pool"
 )
 
 type CallTrace struct {

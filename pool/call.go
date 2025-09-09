@@ -7,8 +7,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/bloxapp/beacon-kit"
-	"github.com/bloxapp/beacon-kit/logging"
+	"github.com/ssvlabs/beacon-kit"
+	"github.com/ssvlabs/beacon-kit/logging"
 	"go.uber.org/zap"
 )
 

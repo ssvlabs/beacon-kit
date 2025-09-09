@@ -7,12 +7,11 @@ import (
 	"strings"
 	"sync"
 
-	eth2client "github.com/attestantio/go-eth2-client"
 	"github.com/attestantio/go-eth2-client/api"
 	v1 "github.com/attestantio/go-eth2-client/api/v1"
-	"github.com/bloxapp/beacon-kit"
 	"github.com/google/uuid"
 	"github.com/hashicorp/go-multierror"
+	"github.com/ssvlabs/beacon-kit"
 )
 
 // state holds properties for Client, so that a pointer to it can be shared for read/write
@@ -200,10 +199,6 @@ func (c *Client) updateSubscriptions(ctx context.Context) error {
 			if clientSubcribed {
 				continue
 			}
-			provider, ok := client.(eth2client.EventsProvider)
-			if !ok {
-				continue
-			}
 
 			// Register client subscription.
 			subscriptionCtx, cancel := context.WithCancel(context.Background())
@@ -218,7 +213,7 @@ func (c *Client) updateSubscriptions(ctx context.Context) error {
 			func(client beacon.Client, sub subscription, subscriptionUUID uuid.UUID) {
 				g.Go(func() error {
 					log.Printf("Subscribing %s to %s (UUID: %x)", strings.ToUpper(sub.topics[0]), client.Address(), subscriptionUUID[:])
-					return provider.Events(subscriptionCtx, &api.EventsOpts{
+					return client.Events(subscriptionCtx, &api.EventsOpts{
 						Topics: sub.topics,
 						Handler: func(e *v1.Event) {
 							sub.handler(client, e)
