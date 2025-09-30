@@ -3,7 +3,7 @@ module github.com/ssvlabs/beacon-kit
 go 1.25
 
 require (
-	github.com/attestantio/go-eth2-client v0.25.0
+	github.com/attestantio/go-eth2-client v0.27.1
 	github.com/google/uuid v1.6.0
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/stretchr/testify v1.10.0
