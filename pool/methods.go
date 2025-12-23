@@ -169,6 +169,28 @@ func (m *methods) BeaconCommittees(ctx context.Context, opts *api.BeaconCommitte
 	return _result.pp1, _result.err
 }
 
+func (m *methods) BlockRewards(ctx context.Context, opts *api.BlockRewardsOpts) (pp1 *api.Response[*apiv1.BlockRewards], err error) {
+	ctx = context.WithValue(ctx, methodCtxKey{}, "BlockRewards")
+	type _resultStruct struct {
+		pp1 *api.Response[*apiv1.BlockRewards]
+		err error
+	}
+	var _result, _unchecked _resultStruct
+	var _mutex sync.Mutex
+	_result.err = m.callFunc(ctx, func(ctx context.Context, client beacon.Client) error {
+		pp1, err := client.BlockRewards(ctx, opts)
+		_mutex.Lock()
+		defer _mutex.Unlock()
+		_unchecked = _resultStruct{pp1, err}
+		if err != nil {
+			return err
+		}
+		_result = _unchecked
+		return nil
+	})
+	return _result.pp1, _result.err
+}
+
 func (m *methods) Domain(ctx context.Context, domainType phase0.DomainType, epoch phase0.Epoch) (d1 phase0.Domain, err error) {
 	ctx = context.WithValue(ctx, methodCtxKey{}, "Domain")
 	type _resultStruct struct {
@@ -598,6 +620,28 @@ func (m *methods) SyncCommitteeDuties(ctx context.Context, opts *api.SyncCommitt
 	var _mutex sync.Mutex
 	_result.err = m.callFunc(ctx, func(ctx context.Context, client beacon.Client) error {
 		pp1, err := client.SyncCommitteeDuties(ctx, opts)
+		_mutex.Lock()
+		defer _mutex.Unlock()
+		_unchecked = _resultStruct{pp1, err}
+		if err != nil {
+			return err
+		}
+		_result = _unchecked
+		return nil
+	})
+	return _result.pp1, _result.err
+}
+
+func (m *methods) SyncCommitteeRewards(ctx context.Context, opts *api.SyncCommitteeRewardsOpts) (pp1 *api.Response[[]*apiv1.SyncCommitteeReward], err error) {
+	ctx = context.WithValue(ctx, methodCtxKey{}, "SyncCommitteeRewards")
+	type _resultStruct struct {
+		pp1 *api.Response[[]*apiv1.SyncCommitteeReward]
+		err error
+	}
+	var _result, _unchecked _resultStruct
+	var _mutex sync.Mutex
+	_result.err = m.callFunc(ctx, func(ctx context.Context, client beacon.Client) error {
+		pp1, err := client.SyncCommitteeRewards(ctx, opts)
 		_mutex.Lock()
 		defer _mutex.Unlock()
 		_unchecked = _resultStruct{pp1, err}

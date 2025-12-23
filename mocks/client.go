@@ -220,6 +220,36 @@ func (_m *Client) BeaconCommittees(ctx context.Context, opts *api.BeaconCommitte
 	return r0, r1
 }
 
+// BlockRewards provides a mock function with given fields: ctx, opts
+func (_m *Client) BlockRewards(ctx context.Context, opts *api.BlockRewardsOpts) (*api.Response[*v1.BlockRewards], error) {
+	ret := _m.Called(ctx, opts)
+
+	if len(ret) == 0 {
+		panic("no return value specified for BlockRewards")
+	}
+
+	var r0 *api.Response[*v1.BlockRewards]
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, *api.BlockRewardsOpts) (*api.Response[*v1.BlockRewards], error)); ok {
+		return rf(ctx, opts)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, *api.BlockRewardsOpts) *api.Response[*v1.BlockRewards]); ok {
+		r0 = rf(ctx, opts)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*api.Response[*v1.BlockRewards])
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, *api.BlockRewardsOpts) error); ok {
+		r1 = rf(ctx, opts)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // Domain provides a mock function with given fields: ctx, domainType, epoch
 func (_m *Client) Domain(ctx context.Context, domainType phase0.DomainType, epoch phase0.Epoch) (phase0.Domain, error) {
 	ret := _m.Called(ctx, domainType, epoch)
@@ -734,6 +764,36 @@ func (_m *Client) SyncCommitteeDuties(ctx context.Context, opts *api.SyncCommitt
 	}
 
 	if rf, ok := ret.Get(1).(func(context.Context, *api.SyncCommitteeDutiesOpts) error); ok {
+		r1 = rf(ctx, opts)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// SyncCommitteeRewards provides a mock function with given fields: ctx, opts
+func (_m *Client) SyncCommitteeRewards(ctx context.Context, opts *api.SyncCommitteeRewardsOpts) (*api.Response[[]*v1.SyncCommitteeReward], error) {
+	ret := _m.Called(ctx, opts)
+
+	if len(ret) == 0 {
+		panic("no return value specified for SyncCommitteeRewards")
+	}
+
+	var r0 *api.Response[[]*v1.SyncCommitteeReward]
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, *api.SyncCommitteeRewardsOpts) (*api.Response[[]*v1.SyncCommitteeReward], error)); ok {
+		return rf(ctx, opts)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, *api.SyncCommitteeRewardsOpts) *api.Response[[]*v1.SyncCommitteeReward]); ok {
+		r0 = rf(ctx, opts)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*api.Response[[]*v1.SyncCommitteeReward])
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, *api.SyncCommitteeRewardsOpts) error); ok {
 		r1 = rf(ctx, opts)
 	} else {
 		r1 = ret.Error(1)

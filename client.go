@@ -48,6 +48,9 @@ type Client interface {
 
 	eth2client.BeaconCommitteesProvider
 
+	eth2client.BlockRewardsProvider
+	eth2client.SyncCommitteeRewardsProvider
+
 	eth2client.SyncCommitteeSubscriptionsSubmitter
 	eth2client.SyncCommitteeMessagesSubmitter
 	eth2client.SyncCommitteeContributionProvider
