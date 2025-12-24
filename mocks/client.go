@@ -100,6 +100,36 @@ func (_m *Client) AttestationData(ctx context.Context, opts *api.AttestationData
 	return r0, r1
 }
 
+// AttestationRewards provides a mock function with given fields: ctx, opts
+func (_m *Client) AttestationRewards(ctx context.Context, opts *api.AttestationRewardsOpts) (*api.Response[*v1.AttestationRewards], error) {
+	ret := _m.Called(ctx, opts)
+
+	if len(ret) == 0 {
+		panic("no return value specified for AttestationRewards")
+	}
+
+	var r0 *api.Response[*v1.AttestationRewards]
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, *api.AttestationRewardsOpts) (*api.Response[*v1.AttestationRewards], error)); ok {
+		return rf(ctx, opts)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, *api.AttestationRewardsOpts) *api.Response[*v1.AttestationRewards]); ok {
+		r0 = rf(ctx, opts)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*api.Response[*v1.AttestationRewards])
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, *api.AttestationRewardsOpts) error); ok {
+		r1 = rf(ctx, opts)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // AttesterDuties provides a mock function with given fields: ctx, opts
 func (_m *Client) AttesterDuties(ctx context.Context, opts *api.AttesterDutiesOpts) (*api.Response[[]*v1.AttesterDuty], error) {
 	ret := _m.Called(ctx, opts)
@@ -296,6 +326,36 @@ func (_m *Client) Events(ctx context.Context, opts *api.EventsOpts) error {
 	}
 
 	return r0
+}
+
+// Finality provides a mock function with given fields: ctx, opts
+func (_m *Client) Finality(ctx context.Context, opts *api.FinalityOpts) (*api.Response[*v1.Finality], error) {
+	ret := _m.Called(ctx, opts)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Finality")
+	}
+
+	var r0 *api.Response[*v1.Finality]
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, *api.FinalityOpts) (*api.Response[*v1.Finality], error)); ok {
+		return rf(ctx, opts)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, *api.FinalityOpts) *api.Response[*v1.Finality]); ok {
+		r0 = rf(ctx, opts)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*api.Response[*v1.Finality])
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, *api.FinalityOpts) error); ok {
+		r1 = rf(ctx, opts)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // Genesis provides a mock function with given fields: ctx, opts

@@ -81,6 +81,28 @@ func (m *methods) AttestationData(ctx context.Context, opts *api.AttestationData
 	return _result.pp1, _result.err
 }
 
+func (m *methods) AttestationRewards(ctx context.Context, opts *api.AttestationRewardsOpts) (pp1 *api.Response[*apiv1.AttestationRewards], err error) {
+	ctx = context.WithValue(ctx, methodCtxKey{}, "AttestationRewards")
+	type _resultStruct struct {
+		pp1 *api.Response[*apiv1.AttestationRewards]
+		err error
+	}
+	var _result, _unchecked _resultStruct
+	var _mutex sync.Mutex
+	_result.err = m.callFunc(ctx, func(ctx context.Context, client beacon.Client) error {
+		pp1, err := client.AttestationRewards(ctx, opts)
+		_mutex.Lock()
+		defer _mutex.Unlock()
+		_unchecked = _resultStruct{pp1, err}
+		if err != nil {
+			return err
+		}
+		_result = _unchecked
+		return nil
+	})
+	return _result.pp1, _result.err
+}
+
 func (m *methods) AttesterDuties(ctx context.Context, opts *api.AttesterDutiesOpts) (pp1 *api.Response[[]*apiv1.AttesterDuty], err error) {
 	ctx = context.WithValue(ctx, methodCtxKey{}, "AttesterDuties")
 	type _resultStruct struct {
@@ -232,6 +254,28 @@ func (m *methods) Events(ctx context.Context, opts *api.EventsOpts) (err error) 
 		return nil
 	})
 	return _result.err
+}
+
+func (m *methods) Finality(ctx context.Context, opts *api.FinalityOpts) (pp1 *api.Response[*apiv1.Finality], err error) {
+	ctx = context.WithValue(ctx, methodCtxKey{}, "Finality")
+	type _resultStruct struct {
+		pp1 *api.Response[*apiv1.Finality]
+		err error
+	}
+	var _result, _unchecked _resultStruct
+	var _mutex sync.Mutex
+	_result.err = m.callFunc(ctx, func(ctx context.Context, client beacon.Client) error {
+		pp1, err := client.Finality(ctx, opts)
+		_mutex.Lock()
+		defer _mutex.Unlock()
+		_unchecked = _resultStruct{pp1, err}
+		if err != nil {
+			return err
+		}
+		_result = _unchecked
+		return nil
+	})
+	return _result.pp1, _result.err
 }
 
 func (m *methods) Genesis(ctx context.Context, opts *api.GenesisOpts) (pp1 *api.Response[*apiv1.Genesis], err error) {

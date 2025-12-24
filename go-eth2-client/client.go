@@ -273,6 +273,22 @@ func (c *Client) SyncCommitteeRewards(ctx context.Context, opts *api.SyncCommitt
 	return checkResponse(provider.SyncCommitteeRewards(ctx, opts))
 }
 
+func (c *Client) AttestationRewards(ctx context.Context, opts *api.AttestationRewardsOpts) (*api.Response[*apiv1.AttestationRewards], error) {
+	provider, ok := c.service.(eth2client.AttestationRewardsProvider)
+	if !ok {
+		return nil, ErrCallNotSupported
+	}
+	return checkResponse(provider.AttestationRewards(ctx, opts))
+}
+
+func (c *Client) Finality(ctx context.Context, opts *api.FinalityOpts) (*api.Response[*apiv1.Finality], error) {
+	provider, ok := c.service.(eth2client.FinalityProvider)
+	if !ok {
+		return nil, ErrCallNotSupported
+	}
+	return checkResponse(provider.Finality(ctx, opts))
+}
+
 func (c *Client) SubmitAggregateAttestations(ctx context.Context, opts *api.SubmitAggregateAttestationsOpts) error {
 	provider, ok := c.service.(eth2client.AggregateAttestationsSubmitter)
 	if !ok {
