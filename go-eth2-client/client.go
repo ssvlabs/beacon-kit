@@ -257,6 +257,38 @@ func (c *Client) BeaconCommittees(ctx context.Context, opts *api.BeaconCommittee
 	return checkResponse(provider.BeaconCommittees(ctx, opts))
 }
 
+func (c *Client) BlockRewards(ctx context.Context, opts *api.BlockRewardsOpts) (*api.Response[*apiv1.BlockRewards], error) {
+	provider, ok := c.service.(eth2client.BlockRewardsProvider)
+	if !ok {
+		return nil, ErrCallNotSupported
+	}
+	return checkResponse(provider.BlockRewards(ctx, opts))
+}
+
+func (c *Client) SyncCommitteeRewards(ctx context.Context, opts *api.SyncCommitteeRewardsOpts) (*api.Response[[]*apiv1.SyncCommitteeReward], error) {
+	provider, ok := c.service.(eth2client.SyncCommitteeRewardsProvider)
+	if !ok {
+		return nil, ErrCallNotSupported
+	}
+	return checkResponse(provider.SyncCommitteeRewards(ctx, opts))
+}
+
+func (c *Client) AttestationRewards(ctx context.Context, opts *api.AttestationRewardsOpts) (*api.Response[*apiv1.AttestationRewards], error) {
+	provider, ok := c.service.(eth2client.AttestationRewardsProvider)
+	if !ok {
+		return nil, ErrCallNotSupported
+	}
+	return checkResponse(provider.AttestationRewards(ctx, opts))
+}
+
+func (c *Client) Finality(ctx context.Context, opts *api.FinalityOpts) (*api.Response[*apiv1.Finality], error) {
+	provider, ok := c.service.(eth2client.FinalityProvider)
+	if !ok {
+		return nil, ErrCallNotSupported
+	}
+	return checkResponse(provider.Finality(ctx, opts))
+}
+
 func (c *Client) SubmitAggregateAttestations(ctx context.Context, opts *api.SubmitAggregateAttestationsOpts) error {
 	provider, ok := c.service.(eth2client.AggregateAttestationsSubmitter)
 	if !ok {

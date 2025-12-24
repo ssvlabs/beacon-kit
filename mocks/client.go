@@ -100,6 +100,36 @@ func (_m *Client) AttestationData(ctx context.Context, opts *api.AttestationData
 	return r0, r1
 }
 
+// AttestationRewards provides a mock function with given fields: ctx, opts
+func (_m *Client) AttestationRewards(ctx context.Context, opts *api.AttestationRewardsOpts) (*api.Response[*v1.AttestationRewards], error) {
+	ret := _m.Called(ctx, opts)
+
+	if len(ret) == 0 {
+		panic("no return value specified for AttestationRewards")
+	}
+
+	var r0 *api.Response[*v1.AttestationRewards]
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, *api.AttestationRewardsOpts) (*api.Response[*v1.AttestationRewards], error)); ok {
+		return rf(ctx, opts)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, *api.AttestationRewardsOpts) *api.Response[*v1.AttestationRewards]); ok {
+		r0 = rf(ctx, opts)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*api.Response[*v1.AttestationRewards])
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, *api.AttestationRewardsOpts) error); ok {
+		r1 = rf(ctx, opts)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // AttesterDuties provides a mock function with given fields: ctx, opts
 func (_m *Client) AttesterDuties(ctx context.Context, opts *api.AttesterDutiesOpts) (*api.Response[[]*v1.AttesterDuty], error) {
 	ret := _m.Called(ctx, opts)
@@ -220,6 +250,36 @@ func (_m *Client) BeaconCommittees(ctx context.Context, opts *api.BeaconCommitte
 	return r0, r1
 }
 
+// BlockRewards provides a mock function with given fields: ctx, opts
+func (_m *Client) BlockRewards(ctx context.Context, opts *api.BlockRewardsOpts) (*api.Response[*v1.BlockRewards], error) {
+	ret := _m.Called(ctx, opts)
+
+	if len(ret) == 0 {
+		panic("no return value specified for BlockRewards")
+	}
+
+	var r0 *api.Response[*v1.BlockRewards]
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, *api.BlockRewardsOpts) (*api.Response[*v1.BlockRewards], error)); ok {
+		return rf(ctx, opts)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, *api.BlockRewardsOpts) *api.Response[*v1.BlockRewards]); ok {
+		r0 = rf(ctx, opts)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*api.Response[*v1.BlockRewards])
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, *api.BlockRewardsOpts) error); ok {
+		r1 = rf(ctx, opts)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // Domain provides a mock function with given fields: ctx, domainType, epoch
 func (_m *Client) Domain(ctx context.Context, domainType phase0.DomainType, epoch phase0.Epoch) (phase0.Domain, error) {
 	ret := _m.Called(ctx, domainType, epoch)
@@ -266,6 +326,36 @@ func (_m *Client) Events(ctx context.Context, opts *api.EventsOpts) error {
 	}
 
 	return r0
+}
+
+// Finality provides a mock function with given fields: ctx, opts
+func (_m *Client) Finality(ctx context.Context, opts *api.FinalityOpts) (*api.Response[*v1.Finality], error) {
+	ret := _m.Called(ctx, opts)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Finality")
+	}
+
+	var r0 *api.Response[*v1.Finality]
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, *api.FinalityOpts) (*api.Response[*v1.Finality], error)); ok {
+		return rf(ctx, opts)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, *api.FinalityOpts) *api.Response[*v1.Finality]); ok {
+		r0 = rf(ctx, opts)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*api.Response[*v1.Finality])
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, *api.FinalityOpts) error); ok {
+		r1 = rf(ctx, opts)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // Genesis provides a mock function with given fields: ctx, opts
@@ -734,6 +824,36 @@ func (_m *Client) SyncCommitteeDuties(ctx context.Context, opts *api.SyncCommitt
 	}
 
 	if rf, ok := ret.Get(1).(func(context.Context, *api.SyncCommitteeDutiesOpts) error); ok {
+		r1 = rf(ctx, opts)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// SyncCommitteeRewards provides a mock function with given fields: ctx, opts
+func (_m *Client) SyncCommitteeRewards(ctx context.Context, opts *api.SyncCommitteeRewardsOpts) (*api.Response[[]*v1.SyncCommitteeReward], error) {
+	ret := _m.Called(ctx, opts)
+
+	if len(ret) == 0 {
+		panic("no return value specified for SyncCommitteeRewards")
+	}
+
+	var r0 *api.Response[[]*v1.SyncCommitteeReward]
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, *api.SyncCommitteeRewardsOpts) (*api.Response[[]*v1.SyncCommitteeReward], error)); ok {
+		return rf(ctx, opts)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, *api.SyncCommitteeRewardsOpts) *api.Response[[]*v1.SyncCommitteeReward]); ok {
+		r0 = rf(ctx, opts)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*api.Response[[]*v1.SyncCommitteeReward])
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, *api.SyncCommitteeRewardsOpts) error); ok {
 		r1 = rf(ctx, opts)
 	} else {
 		r1 = ret.Error(1)
