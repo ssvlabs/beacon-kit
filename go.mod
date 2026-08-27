@@ -1,6 +1,6 @@
 module github.com/ssvlabs/beacon-kit
 
-go 1.25
+go 1.25.0
 
 require (
 	github.com/attestantio/go-eth2-client v0.27.1
@@ -8,7 +8,7 @@ require (
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/stretchr/testify v1.10.0
 	go.uber.org/zap v1.27.0
-	golang.org/x/sync v0.2.0
+	golang.org/x/sync v0.22.0
 )
 
 require (
